@@ -5,11 +5,13 @@ const router = (app) => {
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
-  app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
+  app.get('/getTabs', mid.requiresLogin, controllers.Tab.getTabs);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
-  app.get('/maker', mid.requiresLogin, controllers.Domo.makerPage);
-  app.post('/maker', mid.requiresLogin, controllers.Domo.make);
+  app.get('/ezchord', mid.requiresLogin, controllers.Tab.appHomePage);
+  app.post('/saveTab', mid.requiresLogin, controllers.Tab.make);
+  app.get('/searchForTabs', mid.requiresLogin, controllers.TabSearcher.searchTabs);
+  app.get('/scrapeTab', mid.requiresLogin, controllers.TabScraper.scrapeTab);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

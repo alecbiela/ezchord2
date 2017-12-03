@@ -135,6 +135,7 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
+  return;
   $("#errorMessage").text(message);
   $("#domoMessage").animate({ width: 'toggle' }, 350);
 };

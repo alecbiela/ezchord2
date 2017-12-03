@@ -1,0 +1,193 @@
+#rWrapper, #tabResults, #chordBrowser, #searchFooter, #songInfo{
+	display: none;
+}
+
+#content{
+	width: 760px;
+	height: 600px;
+	padding-left: 20px;
+	padding-right: 20px;
+	background-color: #D4E0FB;
+}
+
+.chord{
+	color: #07a8dd;
+}
+.chord:hover{
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'Lato', sans-serif;
+	font-weight: 5600;
+	letter-spacing: 2px;
+}
+
+form {
+	/*text-align: center;*/
+	width: 100%;
+	height: 10%;
+	margin-bottom: 20px;
+}
+
+#status{
+	text-align: center;
+	margin-top: 5px;
+	margin-bottom: 0;
+}
+
+#songInfo{
+	width: 660px;
+	padding-right:20px;
+	padding-left:20px;
+	margin: auto;
+	height: 30px;
+	font-size: 20px;
+	background: #ddd;
+	
+}
+
+#response, #searchBox{
+	
+	border: 1px solid black;
+	
+	height: 300px;
+	border-style: border-box;
+	margin: auto;
+	color: #fff;
+}
+
+#searchBox{
+	border-radius: 3px;
+	background: #927AE3;
+	padding: 0 20px 0 20px;
+	width: 660px;
+	height: 100px;
+}
+
+#closeChordInfo{
+	float: right;
+	display: inline;
+	margin-top: 3px;
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+#tabResults{
+	width: 680px;
+	height: 340px;
+	background: #eee;
+	padding-right: 10px;
+	padding-left: 10px;
+	overflow-y: scroll;
+	overflow-x: wrap;
+	margin: auto;
+	font-family: 'Droid Sans Mono', monospace;
+	letter-spacing: 1px;
+}
+
+#chordBrowser{
+	width: 680px;
+	height: 125px;
+	background: #ddd;
+	padding: 10px;
+	margin: auto;
+}
+
+#chordBrowser img{
+	height: 120px;
+	width: auto;
+}
+
+#inst{
+	display: inline-block;
+	margin-left: 10px;
+}
+
+#rWrapper{
+	width:701px;
+	height: 380px;
+	background: #777;
+	border: 1px solid black;
+	border-radius: 3px;
+	margin: auto;
+}
+
+#response{
+	width: 700px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background: #aaa;
+}
+
+#submitButton{
+	float: right;
+	width: 80px;
+	height: 25px;
+}
+
+#reset{
+	float:right;
+	width:80px;
+	height: 20px;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+#submitScrape{
+	float: right;
+	width: 110px;
+	height: 30px;
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+header{
+	padding-top: 5px;
+	width: 540px;
+	margin: auto;
+	text-align: center;
+	color: #1c1c1c;
+}
+
+.searchResponseTab{
+	width: 600px;
+	margin: auto;
+	padding: 5px 40px 5px 40px;
+	background-color: #DDD5FB;
+	border: 1px solid #1c1c1c;
+	position: relative;
+	color: #1c1c1c;
+}
+
+.searchResponseTab:hover{
+	background-color: #B5A3F1;
+}
+
+.selectedResponse{
+	background-color: #5639BB !important;
+	color: #fff !important;
+}
+
+.searchResultURL{
+	display:none;
+}
+
+.spanButton{
+	position: absolute;	
+	width: 100%;
+	height: 100%;
+	top:0;
+	left:0;
+	z-index: 10;
+	cursor: pointer;
+}
+
+h1{
+	margin-top: 0;
+}
