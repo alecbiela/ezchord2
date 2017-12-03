@@ -207,19 +207,21 @@ const TabList = function(props) {
   
   
   const tabResults = props.tabs.map(function(tab, index) {
-    const diff = (tab.difficulty) ? tab.difficulty : 'unknown';
-    const rat = (tab.rating) ? (tab.rating + ' stars') : 'unknown';
-    const cID = 'searchResult' + index;    
-    return (
+    if(tab.difficulty && tab.rating) {
+      const diff = (tab.difficulty) ? tab.difficulty : 'unknown';
+      const rat = (tab.rating) ? (tab.rating + ' stars') : 'unknown';
+      const cID = 'searchResult' + index;    
+      return (
       <div className="searchResponseTab" id={cID} >
-        <span className="spanButton"></span>
-        <h3 className="songName">{tab.name}</h3>
-        <h3 className="songArtist">{tab.artist}</h3>
-        <p>Difficulty: {diff}</p>
-        <p>Rating: {rat}</p>
-        <span className="searchResultURL">{tab.url}</span>  
-      </div>
-    );
+          <span className="spanButton"></span>
+          <h3 className="songName">{tab.name}</h3>
+          <h3 className="songArtist">{tab.artist}</h3>
+          <p>Difficulty: {diff}</p>
+          <p>Rating: {rat}</p>
+          <span className="searchResultURL">{tab.url}</span>  
+        </div>
+      );
+    }
   });
   
   return (
