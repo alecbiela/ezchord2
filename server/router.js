@@ -13,6 +13,8 @@ const router = (app) => {
   app.get('/searchForTabs', mid.requiresLogin, controllers.TabSearcher.searchTabs);
   app.get('/scrapeTab', mid.requiresLogin, controllers.TabScraper.scrapeTab);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+  app.get('/*', mid.requiresLogin, controllers.Tab.appHomePage);
+  app.get('/*', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 
 module.exports = router;

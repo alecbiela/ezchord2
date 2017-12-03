@@ -94,7 +94,7 @@ const scrape = (query, info) => {
             
       //do some animating                
       $('#status').html("");*/
-      $('#rWrapper').slideUp(800);
+      $('#searchResponse').slideUp(800);
       $('#scrapeResponse').slideDown(800);
     });
   });
