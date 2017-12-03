@@ -15,8 +15,9 @@ var handleTabFavorite = function handleTabFavorite(e) {
   e.preventDefault();
 
   //get tab information, don't call if the song is already favorited
+  //in the future, this could be replaced with error handling instead of "return false"
   var searchText = document.querySelector('.selectedResponse > .songArtist').textContent + ' - ' + document.querySelector('.selectedResponse > .songName').textContent;
-  if ($('#favoritesWindow:contains("' + searchText + '")')) return false;
+  if ($('#favoritesWindow:contains("' + searchText + '")').length > 0) return false;
 
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function () {
     loadTabsFromServer();
@@ -230,7 +231,7 @@ var TabList = function TabList(props) {
   }
 
   var tabResults = props.tabs.map(function (tab, index) {
-    if (tab.difficulty && tab.rating) {
+    if (!(!tab.difficulty && !tab.rating)) {
       var diff = tab.difficulty ? tab.difficulty : 'unknown';
       var rat = tab.rating ? tab.rating + ' stars' : 'unknown';
       var cID = 'searchResult' + index;

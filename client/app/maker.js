@@ -13,12 +13,14 @@ const loadTabsFromServer = () => {
 //run when the user clicks the button to favorite a tab
 const handleTabFavorite = (e) => {
   e.preventDefault();
+  
 
   //get tab information, don't call if the song is already favorited
+  //in the future, this could be replaced with error handling instead of "return false"
   let searchText = document.querySelector('.selectedResponse > .songArtist').textContent + ' - ' +
     document.querySelector('.selectedResponse > .songName').textContent;
-  if( $('#favoritesWindow:contains("' + searchText + '")') ) return false;
-  
+  if( $('#favoritesWindow:contains("' + searchText + '")').length > 0 ) return false;
+
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function() {
     loadTabsFromServer();
   });
@@ -173,7 +175,7 @@ const SearchForm = (props) => {
 };
 
 //a react element representing the results of the "scrape" (the actual tab)
-const ScrapeResults = function(props) {
+const ScrapeResults = (props) => {
     return (
       <div>
         <div id="tabResults" style={{ whiteSpace: 'pre-wrap'}}>{props.tabContent}</div>
@@ -196,7 +198,7 @@ const ScrapeResults = function(props) {
 }
 
 //a react element representing the list of the RESULTS OF THE TAB SEARCH
-const TabList = function(props) {
+const TabList = (props) => {
   if(props.tabs.length === 0) {
     return (
       <div className="searchResponseTab">
@@ -207,7 +209,7 @@ const TabList = function(props) {
   
   
   const tabResults = props.tabs.map(function(tab, index) {
-    if(tab.difficulty && tab.rating) {
+    if(!((!tab.difficulty) && (!tab.rating))) {
       const diff = (tab.difficulty) ? tab.difficulty : 'unknown';
       const rat = (tab.rating) ? (tab.rating + ' stars') : 'unknown';
       const cID = 'searchResult' + index;    
