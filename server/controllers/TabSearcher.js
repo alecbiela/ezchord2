@@ -10,8 +10,8 @@ const searchTabs = (req, res) => {
   const params = queryString.parse(query);
 
   // validate input
-  if (!params.bName || !params.sName) {
-    res.status(400).json({ error: 'Error!  Missing Artist and/or Song' });
+  if (!params.bName && !params.sName) {
+    res.status(400).json({ error: 'Error!  Please fill in at least 1 field.' });
   }
 
   let returnedTabs = [];
