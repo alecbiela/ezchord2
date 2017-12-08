@@ -364,17 +364,20 @@ $(document).ready(function () {
 });
 "use strict";
 
+//called for error handling, will display error message on page
 var handleError = function handleError(message) {
-  return;
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({ width: 'toggle' }, 350);
+  $("#errorMessage").slideDown(350);
 };
 
+//called to redirect page to another page
 var redirect = function redirect(response) {
-  //$("#domoMessage").animate({width:'hide'},350);
+  $("#errorMessage").slideUp(350);
   window.location = response.redirect;
 };
 
+//called to send an ajax request to the server
+//takes type (GET, POST, etc.), action (URL), data to send, and callback for success
 var sendAjax = function sendAjax(type, action, data, success) {
   $.ajax({
     cache: false,

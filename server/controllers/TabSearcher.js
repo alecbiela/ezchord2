@@ -3,16 +3,20 @@
 const queryString = require('querystring');
 const ugs = require('ultimate-guitar-scraper');
 
-
+// function to search for tabs
+// takes request and response objects
 const searchTabs = (req, res) => {
   const query = req.url.split('?')[1];
   const params = queryString.parse(query);
 
-    // can validate input here, send back 400 if bad request?
+  // validate input
+  if (!params.bName || !params.sName) {
+    res.status(400).json({ error: 'Error!  Missing Artist and/or Song' });
+  }
 
-    // scrape ultimate guitar for a search
   let returnedTabs = [];
 
+  // set up query
   const ugsQuery = {
     bandName: params.bName,
     songName: params.sName,
@@ -20,23 +24,22 @@ const searchTabs = (req, res) => {
     type: ['chords'],
   };
 
+  // callback for tab searching
   const ugsCallback = (error, tabs, response) => {
         // if error, print
     if (error) {
       console.dir(error);
       console.dir(response);
-      res.status(500).send('Internal Server Error.  Please contact page administrator.');
+      res.status(500).json({ error: 'Internal Server Error.  Please contact page administrator.' });
     } else {
       returnedTabs = tabs;
-      console.log('got tabs');
 
-            // use express .json function to return json directly
-      res.setHeader('Content-Type', 'application/json');
+      // use express .json function to return json directly
       res.json({ tabs: returnedTabs });
     }
   };
 
-    // query the Ultimate Guitar Scraper for tabs (callback above)
+  // query the Ultimate Guitar Scraper for tabs (callback above)
   ugs.search(ugsQuery, ugsCallback);
 };
 

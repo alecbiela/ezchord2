@@ -5,6 +5,10 @@ const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
+const settingsPage = (req, res) => {
+  res.render('settings', { csrfToken: req.csrfToken() });
+};
+
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
@@ -30,17 +34,71 @@ const login = (request, response) => {
   const password = `${req.body.pass}`;
 
   if (!username || !password) {
-    return res.status(400).json({ error: 'RAWR! All fields are required' });
+    return res.status(400).json({ error: 'Error!  All fields are required.' });
   }
 
   return Account.AccountModel.authenticate(username, password, (err, account) => {
     if (err || !account) {
-      return res.status(401).json({ error: 'Wrong username or password' });
+      return res.status(401).json({ error: 'Username or password is incorrect.' });
     }
 
     req.session.account = Account.AccountModel.toAPI(account);
 
     return res.json({ redirect: '/ezchord' });
+  });
+};
+
+const changePass = (request, response) => {
+  const req = request;
+  const res = response;
+
+  // cast data to strings
+  req.body.currPass = `${req.body.currPass}`;
+  req.body.newPass = `${req.body.newPass}`;
+  req.body.newPass2 = `${req.body.newPass2}`;
+
+  // validate input
+  if (!req.body.currPass || !req.body.newPass || !req.body.newPass2) {
+    return res.status(400).json({ error: 'Error!  All fields are required.' });
+  }
+
+  if (req.body.newPass !== req.body.newPass2) {
+    return res.status(400).json({ error: 'Error!  New passwords do not match.' });
+  }
+
+  if (req.body.newPass === req.body.currPass) {
+    return res.status(400).json({ error: 'Error!  New password cannot be your old password.' });
+  }
+
+  // validate that the current password is correct
+  return Account.AccountModel.findByUsername(req.session.account.username, (err, docs) => {
+    const thisAccount = docs;
+
+    if (err) {
+      console.dir(err);
+      return res.status(400).json({ error: 'An Error Occurred' });
+    }
+
+    return Account.AccountModel.authenticate(docs.username, req.body.currPass, (error, account) => {
+      if (error || !account) {
+        return res.status(401).json({ error: 'Current Password is incorrect.' });
+      }
+
+      // generate a hash
+      return Account.AccountModel.generateHash(req.body.newPass, (salt, hash) => {
+        // update information
+        thisAccount.password = hash;
+        thisAccount.salt = salt;
+
+        const savePromise = thisAccount.save();
+
+        savePromise.then(() => res.json({ message: 'Password Changed Successfully' }));
+        savePromise.catch((e) => {
+          console.dir(e);
+          return res.status(500).json({ error: 'An Error Occurred' });
+        });
+      });
+    });
   });
 };
 
@@ -54,11 +112,11 @@ const signup = (request, response) => {
   req.body.pass2 = `${req.body.pass2}`;
 
   if (!req.body.username || !req.body.pass || !req.body.pass2) {
-    return res.status(400).json({ error: 'RAWR! All fields are required' });
+    return res.status(400).json({ error: 'Error!  All fields are required.' });
   }
 
   if (req.body.pass !== req.body.pass2) {
-    return res.status(400).json({ error: 'RAWR! Passwords do not match' });
+    return res.status(400).json({ error: 'Error!  Passwords do not match.' });
   }
 
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
@@ -93,3 +151,5 @@ module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.settingsPage = settingsPage;
+module.exports.changePass = changePass;
