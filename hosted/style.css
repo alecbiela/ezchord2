@@ -312,7 +312,7 @@ h1{
 
 #scrapeResponse, #searchResponse { display: none; }
 
-.favoriteTab:hover {
+.favoriteInfo:hover {
     cursor: pointer;
     text-decoration: underline; 
 }
@@ -383,4 +383,17 @@ h1{
 
 #content {
   margin-top: 60px;
+}
+
+.deleteFavButton {
+  color: blue;
+}
+
+.deleteFavButton:hover {
+  color: red;
+  cursor: pointer;
+}
+
+.favoriteInfo {
+  display: inline-block;
 }

@@ -26,6 +26,21 @@ var handleTabFavorite = function handleTabFavorite(e) {
   return false;
 };
 
+//handles deleting of a favorited tab
+var handleFavDelete = function handleFavDelete(e) {
+  e.preventDefault();
+
+  var info = e.target.parentNode.lastChild.textContent;
+  var token = $("#ctoken").val();
+  console.log(token);
+
+  sendAjax('POST', '/removeFavorite', { '_csrf': token, url: info }, function () {
+    loadTabsFromServer();
+  });
+
+  return false;
+};
+
 //retrieves a favorited tab when the user clicks it
 var handleFavScrape = function handleFavScrape(e) {
   e.preventDefault();
@@ -179,7 +194,7 @@ var SearchForm = function SearchForm(props) {
         'Song: '
       ),
       React.createElement('input', { type: 'text', name: 'sName', id: 'sName', placeholder: 'Song...' }),
-      React.createElement('input', { type: 'hidden', name: '_csrf', value: props.csrf }),
+      React.createElement('input', { type: 'hidden', id: 'ctoken', name: '_csrf', value: props.csrf }),
       React.createElement('input', { type: 'submit', value: 'Search!', id: 'submitButton' })
     )
   );
@@ -320,6 +335,11 @@ var FavoritesList = function FavoritesList(props) {
       ),
       React.createElement(
         'span',
+        { className: 'deleteFavButton' },
+        ' (-)'
+      ),
+      React.createElement(
+        'span',
         { className: 'searchResultURL' },
         tab.url
       )
@@ -342,7 +362,8 @@ var FavoritesList = function FavoritesList(props) {
 var setup = function setup(csrf) {
   $('#searchResponse').on('click', '.spanButton', changeSelectedResult);
   $('#searchResponse').on('click', '#submitScrape', handleTabScrape);
-  $('#favoritesWindow').on('click', '.favoriteTab', handleFavScrape);
+  $('#favoritesWindow').on('click', '.favoriteInfo', handleFavScrape);
+  $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
 
   ReactDOM.render(React.createElement(SearchForm, { csrf: csrf }), document.querySelector("#searchWrapper"));
 

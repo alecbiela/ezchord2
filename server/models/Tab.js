@@ -58,6 +58,15 @@ TabSchema.statics.findByOwner = (ownerId, callback) => {
   return TabModel.find(search).select('name artist url').exec(callback);
 };
 
+TabSchema.statics.removeTab = (ownerId, url, callback) => {
+  const search = {
+    owner: convertId(ownerId),
+    url: url,
+  };
+
+  return TabModel.remove(search, callback);
+};
+
 TabModel = mongoose.model('Tab', TabSchema);
 
 module.exports.TabModel = TabModel;

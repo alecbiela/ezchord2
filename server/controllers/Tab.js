@@ -56,6 +56,19 @@ const getTabs = (request, response) => {
   });
 };
 
+const deleteFav = (req, res) => {
+	
+  return Tab.TabModel.removeTab(req.session.account._id, req.body.url, (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'An Error Occurred' });
+    }
+
+    return res.json({ redirect: '/getTabs' });
+  });
+};
+
 module.exports.make = makeTab;
 module.exports.appHomePage = appHomePage;
 module.exports.getTabs = getTabs;
+module.exports.deleteFav = deleteFav;

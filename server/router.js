@@ -12,6 +12,7 @@ const router = (app) => {
   app.post('/changePass', mid.requiresLogin, controllers.Account.changePass);
   app.get('/ezchord', mid.requiresLogin, controllers.Tab.appHomePage);
   app.post('/saveTab', mid.requiresLogin, controllers.Tab.make);
+  app.post('/removeFavorite', mid.requiresLogin, controllers.Tab.deleteFav);
   app.get('/searchForTabs', mid.requiresLogin, controllers.TabSearcher.searchTabs);
   app.get('/scrapeTab', mid.requiresLogin, controllers.TabScraper.scrapeTab);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);

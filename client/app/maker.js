@@ -28,6 +28,21 @@ const handleTabFavorite = (e) => {
   return false;
 };
 
+//handles deleting of a favorited tab
+const handleFavDelete = (e) => {
+  e.preventDefault();
+  
+  const info = e.target.parentNode.lastChild.textContent;
+  const token = $("#ctoken").val();
+  console.log(token);
+  
+  sendAjax('POST', '/removeFavorite', { '_csrf': token, url: info }, function() {
+    loadTabsFromServer();
+  });
+  
+  return false;
+};
+
 //retrieves a favorited tab when the user clicks it
 const handleFavScrape = (e) => {
   e.preventDefault();
@@ -167,7 +182,7 @@ const SearchForm = (props) => {
                 <input type="text" name="bName" id="bName" placeholder="Artist..." />
                 <label htmlFor="sName">Song: </label>
                 <input type="text" name="sName" id="sName" placeholder="Song..." />
-                <input type="hidden" name="_csrf" value={props.csrf} />
+                <input type="hidden" id="ctoken" name="_csrf" value={props.csrf} />
                 <input type="submit" value="Search!" id="submitButton" />
             </form>
         </section>
@@ -254,6 +269,7 @@ const FavoritesList = function(props) {
     return (
       <div key={tab._id} className="favoriteTab">
         <h3 className="favoriteInfo">{tab.artist + ' - ' + tab.name}</h3>
+		<span className="deleteFavButton"> (-)</span>
         <span className="searchResultURL">{tab.url}</span>
       </div>
     );
@@ -271,7 +287,8 @@ const FavoritesList = function(props) {
 const setup = function(csrf) {
   $('#searchResponse').on('click', '.spanButton', changeSelectedResult);
   $('#searchResponse').on('click', '#submitScrape', handleTabScrape);
-  $('#favoritesWindow').on('click', '.favoriteTab', handleFavScrape);
+  $('#favoritesWindow').on('click', '.favoriteInfo', handleFavScrape);
+  $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
   
   ReactDOM.render(
     <SearchForm csrf={csrf} />, document.querySelector("#searchWrapper")
