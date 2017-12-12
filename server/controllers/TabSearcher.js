@@ -29,8 +29,7 @@ const searchTabs = (req, res) => {
         // if error, print
     if (error) {
       console.dir(error);
-      console.dir(response);
-      res.status(500).json({ error: 'Internal Server Error.  Please contact page administrator.' });
+      res.status(400).json({ error: 'No tabs found!  Please try again.' });
     } else {
       returnedTabs = tabs;
 

@@ -102,6 +102,54 @@ const changePass = (request, response) => {
   });
 };
 
+//changes text and background colors of the user
+const changeColors = (request, response) => {
+  const req = request;
+  const res = response;
+  
+  req.body.textColor = `${req.body.textColor}`;
+  req.body.bgColor = `${req.body.bgColor}`;
+  
+  if(!req.body.textColor || !req.body.bgColor) {
+    return res.status(400).json({ error: 'Missing Color Values' });
+  }
+
+  //grab the account to change
+  return Account.AccountModel.findByUsername(req.session.account.username, (err, docs) => { 
+    
+	if(err) {
+      console.dir(err);
+	  return res.status(400).json({ error: 'An Error Occurred' });
+	}
+	
+	const thisAccount = docs;
+	thisAccount.bgColor = req.body.bgColor;
+	thisAccount.textColor = req.body.textColor;
+	
+	//save back to db
+	
+	const savePromise = thisAccount.save();
+	
+	savePromise.then(() => res.json({ message: 'Colors changed successfully' }));
+	savePromise.catch((e) => {
+      console.dir(e);
+	  return res.status(500).json({ error: 'An Error Occurred' });
+	});
+  });
+};
+
+//gets the user's text and background colors to display on the screen
+const getColors = (req, res) => {
+  return Account.AccountModel.findByUsername(req.session.account.username, (err, docs) => { 
+	
+	return res.json({
+	  bgColor: docs.bgColor,
+	  textColor: docs.textColor
+	});
+  });
+};
+
+
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -124,6 +172,8 @@ const signup = (request, response) => {
       username: req.body.username,
       salt,
       password: hash,
+	  bgColor: 'gray',
+	  textColor: 'white'
     };
 
     const newAccount = new Account.AccountModel(accountData);
@@ -153,3 +203,5 @@ module.exports.signup = signup;
 module.exports.getToken = getToken;
 module.exports.settingsPage = settingsPage;
 module.exports.changePass = changePass;
+module.exports.changeColors = changeColors;
+module.exports.getColors = getColors;

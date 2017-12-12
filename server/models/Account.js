@@ -24,6 +24,16 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  textColor: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  bgColor: {
+    type: String,
+    required: false,
+    trim: true,
+  },
   createdDate: {
     type: Date,
     default: Date.now,

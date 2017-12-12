@@ -35,6 +35,23 @@ var handleChangePass = function handleChangePass(e) {
   return false;
 };
 
+var handleChangeColor = function handleChangeColor(e) {
+  e.preventDefault();
+
+  $("#errorMessage").slideUp(350);
+
+  //post new color data to the server
+  sendAjax('POST', '/colors', $('#changeColorForm').serialize(), function (xhr) {
+
+    //let the user know the color change succeeded
+
+    //change colors
+    setUserColors();
+  });
+
+  return false;
+};
+
 var ChangePassWindow = function ChangePassWindow(props) {
   return React.createElement(
     "section",
@@ -57,7 +74,7 @@ var ChangePassWindow = function ChangePassWindow(props) {
       React.createElement("input", { id: "newPass", className: "pass", type: "password", name: "newPass", placeholder: "New Password..." }),
       React.createElement("input", { id: "newPass2", className: "pass2", type: "password", name: "newPass2", placeholder: "Confirm New Password..." }),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { className: "formSubmit", type: "submit", value: "Change Password" })
+      React.createElement("input", { className: "settingSubmit", type: "submit", value: "Change Password" })
     )
   );
 };
@@ -65,7 +82,21 @@ var ChangePassWindow = function ChangePassWindow(props) {
 //called at page load to setup the page
 var setup = function setup(csrf) {
 
+  setUserColors();
+
   ReactDOM.render(React.createElement(ChangePassWindow, { csrf: csrf }), document.querySelector("#content"));
+
+  $('#ctoken').val(csrf);
+
+  $("#bgColor").on("change", function (e) {
+    $(".colorPreview").css("background", e.target.value);
+  });
+
+  $("#textColor").on("change", function (e) {
+    $(".colorPreview").css("color", e.target.value);
+  });
+
+  $("#changeColorForm").on("submit", handleChangeColor);
 };
 
 //gets an initial token at page load, then calls setup
@@ -91,6 +122,20 @@ var handleError = function handleError(message) {
 var redirect = function redirect(response) {
   $("#errorMessage").slideUp(350);
   window.location = response.redirect;
+};
+
+//called to change the user's colors (at page load)
+//will color every element with the class name 'colorable'
+var setUserColors = function setUserColors() {
+  //get colors
+  sendAjax('GET', '/colors', null, function (data) {
+
+    //style all
+    $('.colorable').css({
+      'background-color': data.bgColor,
+      'color': data.textColor
+    });
+  });
 };
 
 //called to send an ajax request to the server

@@ -10,16 +10,37 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
   <link rel="shortcut icon" href="/assets/img/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
+  <script src="/assets/jscolor.min.js"></script>
 </head>
 <body> 
-  <nav>
-  <div class="navlink"><a href="/ezchord">Home</a></div>
-  <div class="navlink"><a href="/settings">Settings</a></div>
-  <div class="navlink"><a href="/logout">Log out</a></div>
+  <nav class="colorable">
+  <div class="navlink colorable"><a class="colorable" href="/ezchord">Home</a></div>
+  <div class="navlink colorable"><a class="colorable" href="/settings">Settings</a></div>
+  <div class="navlink colorable"><a class="colorable" href="/logout">Log out</a></div>
   </nav>
-  <section id="errorMessage">
+  <section id="cWrapper" class="leftSide">
+    <section id="errorMessage" class="colorable">
+  </section> 
+ <section id="content" ></section>
+
   </section>
-  <section id="content"></section>
+  <section id="colorConfig" class="rightSide">
+    <h1 class="loginBoxHeader">Change Colors:</h1>
+	<form id="changeColorForm"
+	  name="changeColorForm"
+      action="/colors"
+      method="POST"
+      class="mainForm"
+	>
+	  <label for="bgColor">Background:</label>
+	  <input id="bgColor" type="color" name="bgColor" /><br/><br/>
+	  <label for="textColor">Text:</label>
+	  <input id="textColor" type="color" name="textColor" /><br/><br/>
+	  <input id="ctoken" style="display: none;" type="hidden" name="_csrf" value='none' />
+	  <input class="settingSubmit colorPreview" type="submit" value="Change Colors" />
+	</form>
+	
+  </section>
   <script src="/assets/settingsBundle.js"></script>
 </body>
 </html>

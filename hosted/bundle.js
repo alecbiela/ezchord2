@@ -45,6 +45,9 @@ var handleFavDelete = function handleFavDelete(e) {
 var handleFavScrape = function handleFavScrape(e) {
   e.preventDefault();
 
+  //change cursor to spinning
+  $('body').css("cursor", "progress");
+
   var info = e.target.parentNode.firstChild.textContent;
   var query = "scrape=" + encodeURIComponent(e.target.parentNode.lastChild.textContent);
   $('#scrapeResponse').slideUp(800).promise().done(function () {
@@ -109,6 +112,7 @@ var scrape = function scrape(query, info) {
         $('#status').html("");*/
       $('#searchResponse').slideUp(800);
       $('#scrapeResponse').slideDown(800);
+      $('body').css("cursor", "default");
     });
   });
 };
@@ -122,8 +126,9 @@ var changeSelectedResult = function changeSelectedResult(e) {
   if (targ.id !== currentSelectionID) {
 
     //remove the old class if there is one
-    if (currentSelectionID !== "") $('#' + currentSelectionID).removeClass('selectedResponse');
-
+    if (currentSelectionID !== "") {
+      $('#' + currentSelectionID).removeClass('selectedResponse');
+    }
     //add styling for the 'selected' and set it to currently selected
     $('#' + targ.id).addClass('selectedResponse');
     currentSelectionID = targ.id;
@@ -136,11 +141,15 @@ var changeSelectedResult = function changeSelectedResult(e) {
 var handleTabSearch = function handleTabSearch(e) {
   e.preventDefault();
 
+  //change cursor to spinning
+  $('body').css("cursor", "progress");
+  $('#errorMessage').slideUp(350);
+
   //get band and song
   var bName = $("#bName").val();
   var sName = $("#sName").val();
   if (bName == '' && sName == '') {
-    handleError("Please fill in at least one of the fields.");
+    handleError("*Please fill in at least one of the fields.");
     return false;
   }
 
@@ -156,7 +165,8 @@ var handleTabSearch = function handleTabSearch(e) {
       ReactDOM.render(React.createElement(TabList, props), document.querySelector("#searchResponse"));
 
       $('#scrapeResponse').slideUp(800).promise().done(function () {
-        return $('#searchResponse').slideDown(800);
+        $('#searchResponse').slideDown(800);
+        $('body').css("cursor", "default");
       });
     });
   });
@@ -168,7 +178,7 @@ var handleTabSearch = function handleTabSearch(e) {
 var SearchForm = function SearchForm(props) {
   return React.createElement(
     'section',
-    { id: 'searchBox' },
+    { id: 'searchBox', className: 'colorable' },
     React.createElement(
       'p',
       null,
@@ -195,7 +205,7 @@ var SearchForm = function SearchForm(props) {
       ),
       React.createElement('input', { type: 'text', name: 'sName', id: 'sName', placeholder: 'Song...' }),
       React.createElement('input', { type: 'hidden', id: 'ctoken', name: '_csrf', value: props.csrf }),
-      React.createElement('input', { type: 'submit', value: 'Search!', id: 'submitButton' })
+      React.createElement('input', { type: 'submit', className: 'settingSubmit', value: 'Search!', id: 'submitButton' })
     )
   );
 };
@@ -225,7 +235,7 @@ var ScrapeResults = function ScrapeResults(props) {
         React.createElement('input', { type: 'hidden', name: 'name', value: props.tab.name }),
         React.createElement('input', { type: 'hidden', name: 'artist', value: props.tab.artist }),
         React.createElement('input', { type: 'hidden', name: 'url', value: props.tab.url }),
-        React.createElement('input', { className: 'favoriteTabSubmit', type: 'submit', value: 'Favorite This Tab!' })
+        React.createElement('input', { className: 'favoriteTabSubmit settingSubmit', type: 'submit', value: 'Favorite This Tab!' })
       )
     )
   );
@@ -234,15 +244,12 @@ var ScrapeResults = function ScrapeResults(props) {
 //a react element representing the list of the RESULTS OF THE TAB SEARCH
 var TabList = function TabList(props) {
   if (props.tabs.length === 0) {
-    return React.createElement(
-      'div',
-      { className: 'searchResponseTab' },
-      React.createElement(
-        'h3',
-        null,
-        'No Tabs Found!  Try changing search input'
-      )
-    );
+    handleError('No Tabs Found!  Try again.');
+    /*return (
+         <div className="searchResponseTab">
+           <h3>No Tabs Found!  Try changing search input</h3>
+         </div>
+       );*/
   }
 
   var tabResults = props.tabs.map(function (tab, index) {
@@ -252,16 +259,16 @@ var TabList = function TabList(props) {
       var cID = 'searchResult' + index;
       return React.createElement(
         'div',
-        { className: 'searchResponseTab', id: cID },
+        { className: 'searchResponseTab colorable', id: cID },
         React.createElement('span', { className: 'spanButton' }),
         React.createElement(
           'h3',
-          { className: 'songName' },
+          { className: 'songName colorable' },
           tab.name
         ),
         React.createElement(
           'h3',
-          { className: 'songArtist' },
+          { className: 'songArtist colorable' },
           tab.artist
         ),
         React.createElement(
@@ -298,7 +305,7 @@ var TabList = function TabList(props) {
       { id: 'searchFooter' },
       React.createElement(
         'button',
-        { type: 'button', id: 'submitScrape' },
+        { type: 'button', className: 'settingSubmit', id: 'submitScrape' },
         'Get This Tab!'
       )
     )
@@ -310,7 +317,7 @@ var FavoritesList = function FavoritesList(props) {
   if (props.tabs.length === 0) {
     return React.createElement(
       'div',
-      { className: 'favoritedTabs' },
+      { className: 'favoritedTabs colorable' },
       React.createElement(
         'h1',
         null,
@@ -335,7 +342,7 @@ var FavoritesList = function FavoritesList(props) {
       ),
       React.createElement(
         'span',
-        { className: 'deleteFavButton' },
+        { className: 'deleteFavButton colorable' },
         ' (-)'
       ),
       React.createElement(
@@ -348,7 +355,7 @@ var FavoritesList = function FavoritesList(props) {
 
   return React.createElement(
     'div',
-    { className: 'favoritedTabs' },
+    { className: 'favoritedTabs colorable' },
     React.createElement(
       'h1',
       null,
@@ -364,6 +371,9 @@ var setup = function setup(csrf) {
   $('#searchResponse').on('click', '#submitScrape', handleTabScrape);
   $('#favoritesWindow').on('click', '.favoriteInfo', handleFavScrape);
   $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
+
+  //set user colors (in helper module)
+  setUserColors();
 
   ReactDOM.render(React.createElement(SearchForm, { csrf: csrf }), document.querySelector("#searchWrapper"));
 
@@ -395,6 +405,20 @@ var handleError = function handleError(message) {
 var redirect = function redirect(response) {
   $("#errorMessage").slideUp(350);
   window.location = response.redirect;
+};
+
+//called to change the user's colors (at page load)
+//will color every element with the class name 'colorable'
+var setUserColors = function setUserColors() {
+  //get colors
+  sendAjax('GET', '/colors', null, function (data) {
+
+    //style all
+    $('.colorable').css({
+      'background-color': data.bgColor,
+      'color': data.textColor
+    });
+  });
 };
 
 //called to send an ajax request to the server

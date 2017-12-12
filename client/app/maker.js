@@ -47,6 +47,9 @@ const handleFavDelete = (e) => {
 const handleFavScrape = (e) => {
   e.preventDefault();
   
+  //change cursor to spinning
+  $('body').css("cursor", "progress");
+  
   const info = e.target.parentNode.firstChild.textContent;
   const query = "scrape=" + encodeURIComponent( e.target.parentNode.lastChild.textContent );
   $('#scrapeResponse').slideUp(800).promise().done(() => scrape(query, info));
@@ -111,6 +114,7 @@ const scrape = (query, info) => {
       $('#status').html("");*/
       $('#searchResponse').slideUp(800);
       $('#scrapeResponse').slideDown(800);
+	  $('body').css("cursor", "default");
     });
   });
 };
@@ -124,8 +128,9 @@ const changeSelectedResult = (e) => {
   if(targ.id !== currentSelectionID){
 
     //remove the old class if there is one
-    if(currentSelectionID !== "") $('#' + currentSelectionID).removeClass('selectedResponse');
-        
+    if(currentSelectionID !== "") {
+		$('#' + currentSelectionID).removeClass('selectedResponse');
+	}
     //add styling for the 'selected' and set it to currently selected
     $('#' + targ.id).addClass('selectedResponse');
     currentSelectionID = targ.id;
@@ -138,11 +143,15 @@ const changeSelectedResult = (e) => {
 const handleTabSearch = (e) => {
   e.preventDefault();
   
+  //change cursor to spinning
+  $('body').css("cursor", "progress");
+  $('#errorMessage').slideUp(350);
+  
   //get band and song
   const bName = $("#bName").val();
   const sName = $("#sName").val();
   if(bName == '' && sName == '') {
-    handleError("Please fill in at least one of the fields.");
+    handleError("*Please fill in at least one of the fields.");
     return false;
   }
   
@@ -159,7 +168,10 @@ const handleTabSearch = (e) => {
         <TabList {...props} />, document.querySelector("#searchResponse")
       );
       
-      $('#scrapeResponse').slideUp(800).promise().done( () => $('#searchResponse').slideDown(800));
+      $('#scrapeResponse').slideUp(800).promise().done( () => {
+		  $('#searchResponse').slideDown(800);
+		  $('body').css("cursor", "default");
+	  });
       
     });
   });
@@ -170,7 +182,7 @@ const handleTabSearch = (e) => {
 //a react element representing the initial search form
 const SearchForm = (props) => {
   return (
-        <section id="searchBox">    
+        <section id="searchBox" className="colorable">    
             <p>Enter an artist, song, or both!</p>
             <form id="searchForm"
                   onSubmit={handleTabSearch}
@@ -183,7 +195,7 @@ const SearchForm = (props) => {
                 <label htmlFor="sName">Song: </label>
                 <input type="text" name="sName" id="sName" placeholder="Song..." />
                 <input type="hidden" id="ctoken" name="_csrf" value={props.csrf} />
-                <input type="submit" value="Search!" id="submitButton" />
+                <input type="submit" className="settingSubmit" value="Search!" id="submitButton" />
             </form>
         </section>
   );
@@ -205,7 +217,7 @@ const ScrapeResults = (props) => {
                   <input type="hidden" name="name" value={props.tab.name} />
                   <input type="hidden" name="artist" value={props.tab.artist} />
                   <input type="hidden" name="url" value={props.tab.url} />
-                  <input className="favoriteTabSubmit" type="submit" value="Favorite This Tab!" />
+                  <input className="favoriteTabSubmit settingSubmit" type="submit" value="Favorite This Tab!" />
             </form>
         </div>
       </div>
@@ -215,11 +227,12 @@ const ScrapeResults = (props) => {
 //a react element representing the list of the RESULTS OF THE TAB SEARCH
 const TabList = (props) => {
   if(props.tabs.length === 0) {
-    return (
+    handleError('No Tabs Found!  Try again.');
+	/*return (
       <div className="searchResponseTab">
         <h3>No Tabs Found!  Try changing search input</h3>
       </div>
-    );
+    );*/
   }
   
   
@@ -229,10 +242,10 @@ const TabList = (props) => {
       const rat = (tab.rating) ? (tab.rating + ' stars') : 'unknown';
       const cID = 'searchResult' + index;    
       return (
-      <div className="searchResponseTab" id={cID} >
+      <div className="searchResponseTab colorable" id={cID} >
           <span className="spanButton"></span>
-          <h3 className="songName">{tab.name}</h3>
-          <h3 className="songArtist">{tab.artist}</h3>
+          <h3 className="songName colorable">{tab.name}</h3>
+          <h3 className="songArtist colorable">{tab.artist}</h3>
           <p>Difficulty: {diff}</p>
           <p>Rating: {rat}</p>
           <span className="searchResultURL">{tab.url}</span>  
@@ -247,7 +260,7 @@ const TabList = (props) => {
         {tabResults}
       </div>
       <div id="searchFooter">
-        <button type="button" id="submitScrape">Get This Tab!</button>
+        <button type="button" className="settingSubmit" id="submitScrape">Get This Tab!</button>
       </div>
     </div>
   );
@@ -258,7 +271,7 @@ const TabList = (props) => {
 const FavoritesList = function(props) {
   if(props.tabs.length === 0) {
     return (
-      <div className="favoritedTabs">
+      <div className="favoritedTabs colorable">
         <h1>My Favorites:</h1>
         <h3 className="emptyFavorites">You have no favorited Tabs</h3>
       </div>
@@ -269,14 +282,14 @@ const FavoritesList = function(props) {
     return (
       <div key={tab._id} className="favoriteTab">
         <h3 className="favoriteInfo">{tab.artist + ' - ' + tab.name}</h3>
-		<span className="deleteFavButton"> (-)</span>
+		<span className="deleteFavButton colorable"> (-)</span>
         <span className="searchResultURL">{tab.url}</span>
       </div>
     );
   });
   
   return (
-    <div className="favoritedTabs">
+    <div className="favoritedTabs colorable">
       <h1>My Favorites:</h1>
       {tabNodes}
     </div>
@@ -289,6 +302,9 @@ const setup = function(csrf) {
   $('#searchResponse').on('click', '#submitScrape', handleTabScrape);
   $('#favoritesWindow').on('click', '.favoriteInfo', handleFavScrape);
   $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
+  
+  //set user colors (in helper module)
+  setUserColors();
   
   ReactDOM.render(
     <SearchForm csrf={csrf} />, document.querySelector("#searchWrapper")

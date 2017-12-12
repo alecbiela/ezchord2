@@ -18,7 +18,7 @@ nav {
     width: 100%;
     height: 50px;
     background-color: gray;
-    margin-bottom:10px;
+    margin-bottom:70px;
 }
 
 nav:nth-child(1) {
@@ -29,23 +29,17 @@ nav:nth-child(1) {
     padding: 5px;
     padding-top: 12px;
     padding-left: 20px;
-    color: white;
     font-size: 1.3em;
     float: left;
 }
 
-.navlink a, .navlink a:link, .navlink a:visited, .navlink a:hover, .navlink a:active {
-    color: white;
+.navlink a {
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-    background-color: gray;
-    transition: background-color 0.4s ease;
 }
 
 .navlink a:hover {
-    transition: background-color 0.8s ease;
-    background-color: #222;
 }
 
 .mainForm {
@@ -68,6 +62,21 @@ nav:nth-child(1) {
     margin-top: 14px;
     font-size: 1.2em;
     width: 100px;
+    background-color: gray;
+    border-radius: 2px;
+    border-color: gray;
+    padding: 3px 0px;
+    color: white;
+    text-decoration: none;
+}
+
+.settingSubmit {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 14px;
+    font-size: 0.8em;
+    width: 140px !important;
     background-color: gray;
     border-radius: 2px;
     border-color: gray;
@@ -157,7 +166,7 @@ form {
     background: #927AE3;
     padding: 0 20px 0 20px;
     width: 720px;
-    height: 100px;
+    height: 110px;
 }
 
 #closeChordInfo{
@@ -213,7 +222,7 @@ form {
 #rWrapper{
     width:761px;
     height: 380px;
-    background: #777;
+    background: #aaa;
     border: 1px solid black;
     border-radius: 3px;
     margin: auto;
@@ -230,6 +239,7 @@ form {
     float: right;
     width: 80px;
     height: 25px;
+	margin-top: 30px;
 }
 
 #reset{
@@ -242,8 +252,6 @@ form {
 
 #submitScrape{
     float: right;
-    width: 110px;
-    height: 30px;
     margin-top: 10px;
     margin-right: 10px;
 }
@@ -270,9 +278,8 @@ header{
     background-color: #B5A3F1;
 }
 
-.selectedResponse{
-    background-color: #5639BB !important;
-    color: #fff !important;
+.selectedResponse, .selectedResponse:hover {
+  background: #fff;
 }
 
 .searchResultURL{
@@ -295,16 +302,18 @@ h1{
 
 
 #rightSide {
-    width: 28%;
+    width: 30%;
     margin: auto;
     float: right;
     background-color: #ddd;
     margin-right: 2%;
     border-radius: 2px;
+	border: 1px solid black;
 }
 
 #leftSide {
-    width: 68%;
+	position: relative;
+    width: 65%;
     margin: auto;
     float: left;
     margin-left: 2%;
@@ -339,11 +348,12 @@ h1{
   height: 50px;
   margin: auto;
   position: absolute;
-  top:50px;
+  top:0;
   right:0;
   background-color: rgba(255,153,153, 0.6);
   text-align: center;
   line-height: 50px;
+  opacity: 0.6;
 }
 
 #loginPageBody {
@@ -377,23 +387,52 @@ h1{
   text-align: center;
   line-height: 50px;
   font-size: 1.75em;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-
-#content {
-  margin-top: 60px;
+  margin-bottom: 10px;
+  margin-top: 40px;
 }
 
 .deleteFavButton {
-  color: blue;
+  opacity: 0.8;
+  background: none !important;
 }
 
 .deleteFavButton:hover {
-  color: red;
   cursor: pointer;
+  opacity: 1.0;
 }
 
 .favoriteInfo {
   display: inline-block;
+}
+
+.leftSide {
+  float: left;
+  width: 48%;
+  border: 1px solid gray;
+  margin-left: 10px;
+  position: relative;
+}
+
+.rightSide {
+  float: right;
+  width: 48%;
+  border: 1px solid gray;
+  margin-right: 10px;
+}
+
+#changeColorForm input {
+  float: right;
+  width: 80px;
+}
+
+.appError {
+  position: absolute;
+  top: 70px !important;
+  width: 500px !important;
+  left: 0 !important;
+  right: 200px !important;
+  background: none !important;
+  opacity: 1.0 !important;
+  text-align: left !important;
+  z-index: 200;
 }

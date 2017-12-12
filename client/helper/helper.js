@@ -10,9 +10,24 @@ const redirect = (response) => {
   window.location = response.redirect;
 };
 
+//called to change the user's colors (at page load)
+//will color every element with the class name 'colorable'
+const setUserColors = () => {
+  //get colors
+  sendAjax('GET', '/colors', null, (data) => {
+    
+	//style all
+	$('.colorable').css({
+      'background-color': data.bgColor,
+      'color': data.textColor,
+    });
+  });
+};
+
+
 //called to send an ajax request to the server
 //takes type (GET, POST, etc.), action (URL), data to send, and callback for success
-const sendAjax = (type, action, data, success) => {
+const sendAjax = (type, action, data, success) => { 
   $.ajax({
       cache: false,
       type: type,
@@ -26,3 +41,5 @@ const sendAjax = (type, action, data, success) => {
       }
   });
 };
+
+

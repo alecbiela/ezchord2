@@ -34,6 +34,23 @@ const handleChangePass = (e) => {
   return false;
 };
 
+const handleChangeColor = (e)=> {
+  e.preventDefault();
+
+  $("#errorMessage").slideUp(350);
+  
+  //post new color data to the server
+  sendAjax('POST', '/colors', $('#changeColorForm').serialize(), (xhr) => {
+	  
+	  //let the user know the color change succeeded
+	  
+	  //change colors
+	  setUserColors();
+  });
+  
+  return false;
+};
+
 const ChangePassWindow = (props) => {
   return (
   <section id="changePassBox">
@@ -49,18 +66,33 @@ const ChangePassWindow = (props) => {
       <input id="newPass"  className="pass" type="password" name="newPass" placeholder="New Password..."/>
       <input id="newPass2" className="pass2" type="password" name="newPass2" placeholder="Confirm New Password..."/>
       <input type="hidden" name="_csrf" value={props.csrf}/>
-      <input className="formSubmit" type="submit" value="Change Password" />
+      <input className="settingSubmit" type="submit" value="Change Password" />
     </form>
   </section>
   );
 };
-
+		
+		
 //called at page load to setup the page
 const setup = function(csrf) {
+  
+  setUserColors();
   
   ReactDOM.render(
     <ChangePassWindow csrf={csrf} />, document.querySelector("#content")
   );
+  
+  $('#ctoken').val(csrf);
+  
+  $("#bgColor").on("change", function(e) {
+    $(".colorPreview").css("background", e.target.value);
+  });
+  
+  $("#textColor").on("change", function(e) {
+    $(".colorPreview").css("color", e.target.value);
+  });
+  
+  $("#changeColorForm").on("submit", handleChangeColor);
 };
 
 //gets an initial token at page load, then calls setup
