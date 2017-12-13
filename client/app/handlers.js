@@ -54,8 +54,9 @@ const handleFavScrape = (e) => {
 //scrapes a new (not favorited tab)
 const handleTabScrape = (e) => {
   e.preventDefault();
-    //let the user know we heard their button press
-    //$('#status').html("Retrieving Tab...");
+
+    //change cursor to spinning
+    $('body').css("cursor", "progress");
     
     //get user selection
     const data = currentSelectionID;
