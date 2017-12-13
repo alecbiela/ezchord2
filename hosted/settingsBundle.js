@@ -1,5 +1,9 @@
 "use strict";
 
+//setting.js
+//contains front-end functionality for settings page
+
+//handles changing passwords
 var handleChangePass = function handleChangePass(e) {
   e.preventDefault();
 
@@ -30,11 +34,13 @@ var handleChangePass = function handleChangePass(e) {
     $('#changePassForm').find("input[type=password], textarea").val("");
 
     //let the user know PW change succeeded
+    handleError("Password Changed Successfully");
   });
 
   return false;
 };
 
+//handles changing website colors
 var handleChangeColor = function handleChangeColor(e) {
   e.preventDefault();
 
@@ -52,6 +58,7 @@ var handleChangeColor = function handleChangeColor(e) {
   return false;
 };
 
+//react element for the password change window
 var ChangePassWindow = function ChangePassWindow(props) {
   return React.createElement(
     "section",
@@ -82,12 +89,14 @@ var ChangePassWindow = function ChangePassWindow(props) {
 //called at page load to setup the page
 var setup = function setup(csrf) {
 
+  //set the user colors
   setUserColors();
 
+  //render the password change window
   ReactDOM.render(React.createElement(ChangePassWindow, { csrf: csrf }), document.querySelector("#content"));
-
   $('#ctoken').val(csrf);
 
+  //hook up event listeners
   $("#bgColor").on("change", function (e) {
     $(".colorPreview").css("background", e.target.value);
   });
@@ -111,6 +120,10 @@ $(document).ready(function () {
   getToken();
 });
 "use strict";
+
+//helper.js
+//contains functionality used across views
+
 
 //called for error handling, will display error message on page
 var handleError = function handleError(message) {

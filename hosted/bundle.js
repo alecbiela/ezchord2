@@ -1,14 +1,7 @@
 'use strict';
 
-//holds the current tab that the user has selected
-var currentSelectionID = '';
-
-//gets favorited tabs from server
-var loadTabsFromServer = function loadTabsFromServer() {
-  sendAjax('GET', '/getTabs', null, function (data) {
-    ReactDOM.render(React.createElement(FavoritesList, { tabs: data.tabs }), document.querySelector("#favoritesWindow"));
-  });
-};
+//handlers.js
+//contains the app's event handlers
 
 //run when the user clicks the button to favorite a tab
 var handleTabFavorite = function handleTabFavorite(e) {
@@ -19,6 +12,7 @@ var handleTabFavorite = function handleTabFavorite(e) {
   var searchText = document.querySelector('.selectedResponse > .songArtist').textContent + ' - ' + document.querySelector('.selectedResponse > .songName').textContent;
   if ($('#favoritesWindow:contains("' + searchText + '")').length > 0) return false;
 
+  //send AJAX to save the tab as favorite, afterward reload favorite tabs
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function () {
     loadTabsFromServer();
   });
@@ -30,10 +24,12 @@ var handleTabFavorite = function handleTabFavorite(e) {
 var handleFavDelete = function handleFavDelete(e) {
   e.preventDefault();
 
+  //collect info
   var info = e.target.parentNode.lastChild.textContent;
   var token = $("#ctoken").val();
   console.log(token);
 
+  //send AJAX to delete the tab from favorites, afterward reload favorite tabs
   sendAjax('POST', '/removeFavorite', { '_csrf': token, url: info }, function () {
     loadTabsFromServer();
   });
@@ -162,8 +158,10 @@ var handleTabSearch = function handleTabSearch(e) {
         csrf: result.csrfToken
       };
 
+      //render the search response with props (above)
       ReactDOM.render(React.createElement(TabList, props), document.querySelector("#searchResponse"));
 
+      //do some animating
       $('#scrapeResponse').slideUp(800).promise().done(function () {
         $('#searchResponse').slideDown(800);
         $('body').css("cursor", "default");
@@ -173,196 +171,19 @@ var handleTabSearch = function handleTabSearch(e) {
 
   return false;
 };
+'use strict';
 
-//a react element representing the initial search form
-var SearchForm = function SearchForm(props) {
-  return React.createElement(
-    'section',
-    { id: 'searchBox', className: 'colorable' },
-    React.createElement(
-      'p',
-      null,
-      'Enter an artist, song, or both!'
-    ),
-    React.createElement(
-      'form',
-      { id: 'searchForm',
-        onSubmit: handleTabSearch,
-        name: 'searchForm',
-        action: '/searchForTabs',
-        method: 'GET'
-      },
-      React.createElement(
-        'label',
-        { htmlFor: 'bName' },
-        'Artist: '
-      ),
-      React.createElement('input', { type: 'text', name: 'bName', id: 'bName', placeholder: 'Artist...' }),
-      React.createElement(
-        'label',
-        { htmlFor: 'sName' },
-        'Song: '
-      ),
-      React.createElement('input', { type: 'text', name: 'sName', id: 'sName', placeholder: 'Song...' }),
-      React.createElement('input', { type: 'hidden', id: 'ctoken', name: '_csrf', value: props.csrf }),
-      React.createElement('input', { type: 'submit', className: 'settingSubmit', value: 'Search!', id: 'submitButton' })
-    )
-  );
-};
+//init.js
+//holds app page init and setup code
 
-//a react element representing the results of the "scrape" (the actual tab)
-var ScrapeResults = function ScrapeResults(props) {
-  return React.createElement(
-    'div',
-    null,
-    React.createElement(
-      'div',
-      { id: 'tabResults', style: { whiteSpace: 'pre-wrap' } },
-      props.tabContent
-    ),
-    React.createElement(
-      'div',
-      { id: 'tabResultFooter' },
-      React.createElement(
-        'form',
-        { id: 'favoriteForm',
-          onSubmit: handleTabFavorite,
-          name: 'favoriteForm',
-          action: '/saveTab',
-          method: 'POST'
-        },
-        React.createElement('input', { type: 'hidden', name: '_csrf', value: props.csrf }),
-        React.createElement('input', { type: 'hidden', name: 'name', value: props.tab.name }),
-        React.createElement('input', { type: 'hidden', name: 'artist', value: props.tab.artist }),
-        React.createElement('input', { type: 'hidden', name: 'url', value: props.tab.url }),
-        React.createElement('input', { className: 'favoriteTabSubmit settingSubmit', type: 'submit', value: 'Favorite This Tab!' })
-      )
-    )
-  );
-};
+//holds the current tab that the user has selected
+var currentSelectionID = '';
 
-//a react element representing the list of the RESULTS OF THE TAB SEARCH
-var TabList = function TabList(props) {
-  if (props.tabs.length === 0) {
-    handleError('No Tabs Found!  Try again.');
-    /*return (
-         <div className="searchResponseTab">
-           <h3>No Tabs Found!  Try changing search input</h3>
-         </div>
-       );*/
-  }
-
-  var tabResults = props.tabs.map(function (tab, index) {
-    if (!(!tab.difficulty && !tab.rating)) {
-      var diff = tab.difficulty ? tab.difficulty : 'unknown';
-      var rat = tab.rating ? tab.rating + ' stars' : 'unknown';
-      var cID = 'searchResult' + index;
-      return React.createElement(
-        'div',
-        { className: 'searchResponseTab colorable', id: cID },
-        React.createElement('span', { className: 'spanButton' }),
-        React.createElement(
-          'h3',
-          { className: 'songName colorable' },
-          tab.name
-        ),
-        React.createElement(
-          'h3',
-          { className: 'songArtist colorable' },
-          tab.artist
-        ),
-        React.createElement(
-          'p',
-          null,
-          'Difficulty: ',
-          diff
-        ),
-        React.createElement(
-          'p',
-          null,
-          'Rating: ',
-          rat
-        ),
-        React.createElement(
-          'span',
-          { className: 'searchResultURL' },
-          tab.url
-        )
-      );
-    }
+//gets favorited tabs from server
+var loadTabsFromServer = function loadTabsFromServer() {
+  sendAjax('GET', '/getTabs', null, function (data) {
+    ReactDOM.render(React.createElement(FavoritesList, { tabs: data.tabs }), document.querySelector("#favoritesWindow"));
   });
-
-  return React.createElement(
-    'div',
-    { id: 'rWrapper' },
-    React.createElement(
-      'div',
-      { id: 'response' },
-      tabResults
-    ),
-    React.createElement(
-      'div',
-      { id: 'searchFooter' },
-      React.createElement(
-        'button',
-        { type: 'button', className: 'settingSubmit', id: 'submitScrape' },
-        'Get This Tab!'
-      )
-    )
-  );
-};
-
-//a react element representing the list of tabs the user has favorited
-var FavoritesList = function FavoritesList(props) {
-  if (props.tabs.length === 0) {
-    return React.createElement(
-      'div',
-      { className: 'favoritedTabs colorable' },
-      React.createElement(
-        'h1',
-        null,
-        'My Favorites:'
-      ),
-      React.createElement(
-        'h3',
-        { className: 'emptyFavorites' },
-        'You have no favorited Tabs'
-      )
-    );
-  }
-
-  var tabNodes = props.tabs.map(function (tab) {
-    return React.createElement(
-      'div',
-      { key: tab._id, className: 'favoriteTab' },
-      React.createElement(
-        'h3',
-        { className: 'favoriteInfo' },
-        tab.artist + ' - ' + tab.name
-      ),
-      React.createElement(
-        'span',
-        { className: 'deleteFavButton colorable' },
-        ' (-)'
-      ),
-      React.createElement(
-        'span',
-        { className: 'searchResultURL' },
-        tab.url
-      )
-    );
-  });
-
-  return React.createElement(
-    'div',
-    { className: 'favoritedTabs colorable' },
-    React.createElement(
-      'h1',
-      null,
-      'My Favorites:'
-    ),
-    tabNodes
-  );
 };
 
 //called at page load to setup the page
@@ -394,6 +215,201 @@ $(document).ready(function () {
   getToken();
 });
 "use strict";
+
+//views.js
+//holds the react DOM elements that the app will render at various times
+
+//a list of the tabs the user has favorited
+var FavoritesList = function FavoritesList(props) {
+  if (props.tabs.length === 0) {
+    return React.createElement(
+      "div",
+      { className: "favoritedTabs colorable" },
+      React.createElement(
+        "h1",
+        null,
+        "My Favorites:"
+      ),
+      React.createElement(
+        "h3",
+        { className: "emptyFavorites" },
+        "You have no favorited Tabs"
+      )
+    );
+  }
+
+  var tabNodes = props.tabs.map(function (tab) {
+    return React.createElement(
+      "div",
+      { key: tab._id, className: "favoriteTab" },
+      React.createElement(
+        "h3",
+        { className: "favoriteInfo" },
+        tab.artist + ' - ' + tab.name
+      ),
+      React.createElement(
+        "span",
+        { className: "deleteFavButton colorable" },
+        " (-)"
+      ),
+      React.createElement(
+        "span",
+        { className: "searchResultURL" },
+        tab.url
+      )
+    );
+  });
+
+  return React.createElement(
+    "div",
+    { className: "favoritedTabs colorable" },
+    React.createElement(
+      "h1",
+      null,
+      "My Favorites:"
+    ),
+    tabNodes
+  );
+};
+
+//a react element representing the list of the RESULTS OF THE TAB SEARCH
+var TabList = function TabList(props) {
+  if (props.tabs.length === 0) {
+    handleError('No Tabs Found!  Try again.');
+  }
+
+  //creates 1 block for each tab result, mapped to an array
+  var tabResults = props.tabs.map(function (tab, index) {
+    if (!(!tab.difficulty && !tab.rating)) {
+      var diff = tab.difficulty ? tab.difficulty : 'unknown';
+      var rat = tab.rating ? tab.rating + ' stars' : 'unknown';
+      var cID = 'searchResult' + index;
+      return React.createElement(
+        "div",
+        { className: "searchResponseTab colorable", id: cID },
+        React.createElement("span", { className: "spanButton" }),
+        React.createElement(
+          "h3",
+          { className: "songName colorable" },
+          tab.name
+        ),
+        React.createElement(
+          "h3",
+          { className: "songArtist colorable" },
+          tab.artist
+        ),
+        React.createElement(
+          "p",
+          null,
+          "Difficulty: ",
+          diff
+        ),
+        React.createElement(
+          "p",
+          null,
+          "Rating: ",
+          rat
+        ),
+        React.createElement(
+          "span",
+          { className: "searchResultURL" },
+          tab.url
+        )
+      );
+    }
+  });
+
+  return React.createElement(
+    "div",
+    { id: "rWrapper" },
+    React.createElement(
+      "div",
+      { id: "response" },
+      tabResults
+    ),
+    React.createElement(
+      "div",
+      { id: "searchFooter" },
+      React.createElement(
+        "button",
+        { type: "button", className: "settingSubmit", id: "submitScrape" },
+        "Get This Tab!"
+      )
+    )
+  );
+};
+
+//a react element representing the results of the "scrape" (the actual tab)
+var ScrapeResults = function ScrapeResults(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "div",
+      { id: "tabResults", style: { whiteSpace: 'pre-wrap' } },
+      props.tabContent
+    ),
+    React.createElement(
+      "div",
+      { id: "tabResultFooter" },
+      React.createElement(
+        "form",
+        { id: "favoriteForm",
+          onSubmit: handleTabFavorite,
+          name: "favoriteForm",
+          action: "/saveTab",
+          method: "POST"
+        },
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement("input", { type: "hidden", name: "name", value: props.tab.name }),
+        React.createElement("input", { type: "hidden", name: "artist", value: props.tab.artist }),
+        React.createElement("input", { type: "hidden", name: "url", value: props.tab.url }),
+        React.createElement("input", { className: "favoriteTabSubmit settingSubmit", type: "submit", value: "Favorite This Tab!" })
+      )
+    )
+  );
+};
+
+//a react element representing the initial search form
+var SearchForm = function SearchForm(props) {
+  return React.createElement(
+    "section",
+    { id: "searchBox", className: "colorable" },
+    React.createElement(
+      "p",
+      null,
+      "Enter an artist, song, or both!"
+    ),
+    React.createElement(
+      "form",
+      { id: "searchForm",
+        onSubmit: handleTabSearch,
+        name: "searchForm",
+        action: "/searchForTabs",
+        method: "GET"
+      },
+      React.createElement(
+        "label",
+        { htmlFor: "bName" },
+        "Artist: "
+      ),
+      React.createElement("input", { type: "text", name: "bName", id: "bName", placeholder: "Artist..." }),
+      React.createElement(
+        "label",
+        { htmlFor: "sName" },
+        "Song: "
+      ),
+      React.createElement("input", { type: "text", name: "sName", id: "sName", placeholder: "Song..." }),
+      React.createElement("input", { type: "hidden", id: "ctoken", name: "_csrf", value: props.csrf }),
+      React.createElement("input", { type: "submit", className: "settingSubmit", value: "Search!", id: "submitButton" })
+    )
+  );
+};
+"use strict";
+
+//helper.js
+//contains functionality used across views
+
 
 //called for error handling, will display error message on page
 var handleError = function handleError(message) {

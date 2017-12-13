@@ -1,11 +1,13 @@
 const models = require('../models');
 const Tab = models.Tab;
 
+// saves a new TAB to the user's account
 const makeTab = (req, res) => {
   if (!req.body.name || !req.body.url || !req.body.artist) {
     return res.status(400).json({ error: 'Missing Title, Artist, and/or URL of TAB' });
   }
 
+  // set up tab data
   const tabData = {
     name: req.body.name,
     artist: req.body.artist,
@@ -13,6 +15,7 @@ const makeTab = (req, res) => {
     owner: req.session.account._id,
   };
 
+  // make a new tab and save it to the DB
   const newTab = new Tab.TabModel(tabData);
 
   const tabPromise = newTab.save();
@@ -31,6 +34,7 @@ const makeTab = (req, res) => {
   return tabPromise;
 };
 
+// renders the app homepage, sends back the user's favorited tabs
 const appHomePage = (req, res) => {
   Tab.TabModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
@@ -42,6 +46,7 @@ const appHomePage = (req, res) => {
   });
 };
 
+// sends back the user's favorited tabs to the client
 const getTabs = (request, response) => {
   const req = request;
   const res = response;
@@ -56,9 +61,9 @@ const getTabs = (request, response) => {
   });
 };
 
+// deletes a favorited tab from the user's account
 const deleteFav = (req, res) => {
-	
-  return Tab.TabModel.removeTab(req.session.account._id, req.body.url, (err) => {
+  Tab.TabModel.removeTab(req.session.account._id, req.body.url, (err) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ error: 'An Error Occurred' });
@@ -68,6 +73,7 @@ const deleteFav = (req, res) => {
   });
 };
 
+// exports
 module.exports.make = makeTab;
 module.exports.appHomePage = appHomePage;
 module.exports.getTabs = getTabs;

@@ -1,3 +1,7 @@
+//setting.js
+//contains front-end functionality for settings page
+
+//handles changing passwords
 const handleChangePass = (e) => {
   e.preventDefault();
   
@@ -28,12 +32,14 @@ const handleChangePass = (e) => {
     $('#changePassForm').find("input[type=password], textarea").val("")
     
     //let the user know PW change succeeded
+    handleError("Password Changed Successfully");
     
   });
   
   return false;
 };
 
+//handles changing website colors
 const handleChangeColor = (e)=> {
   e.preventDefault();
 
@@ -41,16 +47,17 @@ const handleChangeColor = (e)=> {
   
   //post new color data to the server
   sendAjax('POST', '/colors', $('#changeColorForm').serialize(), (xhr) => {
-	  
-	  //let the user know the color change succeeded
-	  
-	  //change colors
-	  setUserColors();
+      
+      //let the user know the color change succeeded
+      
+      //change colors
+      setUserColors();
   });
   
   return false;
 };
 
+//react element for the password change window
 const ChangePassWindow = (props) => {
   return (
   <section id="changePassBox">
@@ -71,19 +78,20 @@ const ChangePassWindow = (props) => {
   </section>
   );
 };
-		
-		
+        
 //called at page load to setup the page
 const setup = function(csrf) {
   
+  //set the user colors
   setUserColors();
   
+  //render the password change window
   ReactDOM.render(
     <ChangePassWindow csrf={csrf} />, document.querySelector("#content")
   );
-  
   $('#ctoken').val(csrf);
   
+  //hook up event listeners
   $("#bgColor").on("change", function(e) {
     $(".colorPreview").css("background", e.target.value);
   });

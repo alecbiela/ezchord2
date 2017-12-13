@@ -1,3 +1,7 @@
+//helper.js
+//contains functionality used across views
+
+
 //called for error handling, will display error message on page
 const handleError = (message) => {
   $("#errorMessage").text(message);
@@ -16,14 +20,13 @@ const setUserColors = () => {
   //get colors
   sendAjax('GET', '/colors', null, (data) => {
     
-	//style all
-	$('.colorable').css({
+    //style all
+    $('.colorable').css({
       'background-color': data.bgColor,
       'color': data.textColor,
     });
   });
 };
-
 
 //called to send an ajax request to the server
 //takes type (GET, POST, etc.), action (URL), data to send, and callback for success
@@ -41,5 +44,3 @@ const sendAjax = (type, action, data, success) => {
       }
   });
 };
-
-

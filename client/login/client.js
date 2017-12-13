@@ -101,12 +101,14 @@ const setup = (csrf) => {
   createLoginContentWindow(csrf);
 };
 
+//called to get the initial token
 const getToken = () => {
   sendAjax('GET', '/getToken', null, (result) => {
     setup(result.csrfToken);
   });
 };
 
+//called at page load
 $(document).ready(function() {
   getToken();
 });

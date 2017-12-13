@@ -1,14 +1,5 @@
-//holds the current tab that the user has selected
-let currentSelectionID = '';
-
-//gets favorited tabs from server
-const loadTabsFromServer = () => {
-  sendAjax('GET', '/getTabs', null, (data) => {
-    ReactDOM.render(
-      <FavoritesList tabs={data.tabs} />, document.querySelector("#favoritesWindow")
-    );
-  });
-};
+//handlers.js
+//contains the app's event handlers
 
 //run when the user clicks the button to favorite a tab
 const handleTabFavorite = (e) => {
@@ -21,6 +12,7 @@ const handleTabFavorite = (e) => {
     document.querySelector('.selectedResponse > .songName').textContent;
   if( $('#favoritesWindow:contains("' + searchText + '")').length > 0 ) return false;
 
+  //send AJAX to save the tab as favorite, afterward reload favorite tabs
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function() {
     loadTabsFromServer();
   });
@@ -32,10 +24,12 @@ const handleTabFavorite = (e) => {
 const handleFavDelete = (e) => {
   e.preventDefault();
   
+  //collect info
   const info = e.target.parentNode.lastChild.textContent;
   const token = $("#ctoken").val();
   console.log(token);
   
+  //send AJAX to delete the tab from favorites, afterward reload favorite tabs
   sendAjax('POST', '/removeFavorite', { '_csrf': token, url: info }, function() {
     loadTabsFromServer();
   });
@@ -164,10 +158,12 @@ const handleTabSearch = (e) => {
         csrf: result.csrfToken,
       };
     
+	  //render the search response with props (above)
       ReactDOM.render(
         <TabList {...props} />, document.querySelector("#searchResponse")
       );
       
+	  //do some animating
       $('#scrapeResponse').slideUp(800).promise().done( () => {
 		  $('#searchResponse').slideDown(800);
 		  $('body').css("cursor", "default");
@@ -178,154 +174,3 @@ const handleTabSearch = (e) => {
   
   return false;
 };
-
-//a react element representing the initial search form
-const SearchForm = (props) => {
-  return (
-        <section id="searchBox" className="colorable">    
-            <p>Enter an artist, song, or both!</p>
-            <form id="searchForm"
-                  onSubmit={handleTabSearch}
-                  name="searchForm"                  
-                  action="/searchForTabs"
-                  method="GET"
-            >
-                <label htmlFor="bName">Artist: </label>
-                <input type="text" name="bName" id="bName" placeholder="Artist..." />
-                <label htmlFor="sName">Song: </label>
-                <input type="text" name="sName" id="sName" placeholder="Song..." />
-                <input type="hidden" id="ctoken" name="_csrf" value={props.csrf} />
-                <input type="submit" className="settingSubmit" value="Search!" id="submitButton" />
-            </form>
-        </section>
-  );
-};
-
-//a react element representing the results of the "scrape" (the actual tab)
-const ScrapeResults = (props) => {
-    return (
-      <div>
-        <div id="tabResults" style={{ whiteSpace: 'pre-wrap'}}>{props.tabContent}</div>
-        <div id="tabResultFooter">
-            <form id="favoriteForm"
-                  onSubmit={handleTabFavorite}
-                  name="favoriteForm"
-                  action="/saveTab"
-                  method="POST"
-            >
-                  <input type="hidden" name="_csrf" value={props.csrf} />
-                  <input type="hidden" name="name" value={props.tab.name} />
-                  <input type="hidden" name="artist" value={props.tab.artist} />
-                  <input type="hidden" name="url" value={props.tab.url} />
-                  <input className="favoriteTabSubmit settingSubmit" type="submit" value="Favorite This Tab!" />
-            </form>
-        </div>
-      </div>
-    );
-}
-
-//a react element representing the list of the RESULTS OF THE TAB SEARCH
-const TabList = (props) => {
-  if(props.tabs.length === 0) {
-    handleError('No Tabs Found!  Try again.');
-	/*return (
-      <div className="searchResponseTab">
-        <h3>No Tabs Found!  Try changing search input</h3>
-      </div>
-    );*/
-  }
-  
-  
-  const tabResults = props.tabs.map(function(tab, index) {
-    if(!((!tab.difficulty) && (!tab.rating))) {
-      const diff = (tab.difficulty) ? tab.difficulty : 'unknown';
-      const rat = (tab.rating) ? (tab.rating + ' stars') : 'unknown';
-      const cID = 'searchResult' + index;    
-      return (
-      <div className="searchResponseTab colorable" id={cID} >
-          <span className="spanButton"></span>
-          <h3 className="songName colorable">{tab.name}</h3>
-          <h3 className="songArtist colorable">{tab.artist}</h3>
-          <p>Difficulty: {diff}</p>
-          <p>Rating: {rat}</p>
-          <span className="searchResultURL">{tab.url}</span>  
-        </div>
-      );
-    }
-  });
-  
-  return (
-    <div id="rWrapper">
-      <div id="response">
-        {tabResults}
-      </div>
-      <div id="searchFooter">
-        <button type="button" className="settingSubmit" id="submitScrape">Get This Tab!</button>
-      </div>
-    </div>
-  );
-  
-};
-
-//a react element representing the list of tabs the user has favorited
-const FavoritesList = function(props) {
-  if(props.tabs.length === 0) {
-    return (
-      <div className="favoritedTabs colorable">
-        <h1>My Favorites:</h1>
-        <h3 className="emptyFavorites">You have no favorited Tabs</h3>
-      </div>
-    );
-  }
-  
-  const tabNodes = props.tabs.map(function(tab) {
-    return (
-      <div key={tab._id} className="favoriteTab">
-        <h3 className="favoriteInfo">{tab.artist + ' - ' + tab.name}</h3>
-		<span className="deleteFavButton colorable"> (-)</span>
-        <span className="searchResultURL">{tab.url}</span>
-      </div>
-    );
-  });
-  
-  return (
-    <div className="favoritedTabs colorable">
-      <h1>My Favorites:</h1>
-      {tabNodes}
-    </div>
-  );
-};
-
-//called at page load to setup the page
-const setup = function(csrf) {
-  $('#searchResponse').on('click', '.spanButton', changeSelectedResult);
-  $('#searchResponse').on('click', '#submitScrape', handleTabScrape);
-  $('#favoritesWindow').on('click', '.favoriteInfo', handleFavScrape);
-  $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
-  
-  //set user colors (in helper module)
-  setUserColors();
-  
-  ReactDOM.render(
-    <SearchForm csrf={csrf} />, document.querySelector("#searchWrapper")
-  );
-  
-  ReactDOM.render(
-    <FavoritesList tabs={[]} />, document.querySelector("#favoritesWindow")
-  );
-  
-  loadTabsFromServer();
-};
-
-//gets an initial token at page load, then calls setup
-const getToken = () => {
-  sendAjax('GET', '/getToken', null, (result) => {
-      setup(result.csrfToken);
-  });
-};
-
-//fires when the page loads
-$(document).ready(function() {
-  getToken();
-});
-    

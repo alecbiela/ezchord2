@@ -14,8 +14,9 @@ const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/DomoMaker';
+const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/ezchord2';
 
+// connect to database
 mongoose.connect(dbURL, (err) => {
   if (err) {
     console.log('Could not connect to database');
@@ -30,6 +31,7 @@ let redisURL = {
 
 let redisPASS;
 
+// init redis
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
   redisPASS = redisURL.auth.split(':')[1];
@@ -38,6 +40,7 @@ if (process.env.REDISCLOUD_URL) {
 // pull in our routes
 const router = require('./router.js');
 
+// server setup
 const app = express();
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
@@ -78,6 +81,7 @@ app.use((err, req, res, next) => {
 
 router(app);
 
+// start listening
 app.listen(port, (err) => {
   if (err) {
     throw err;

@@ -11,6 +11,7 @@ const setName = (name) => _.escape(name).trim();
 const setURL = (url) => _.escape(url).trim();
 const setArtist = (artist) => _.escape(artist).trim();
 
+// schema for user-favorited tabs
 const TabSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -45,11 +46,13 @@ const TabSchema = new mongoose.Schema({
   },
 });
 
+// sends data to the API
 TabSchema.statics.toAPI = (doc) => ({
   name: doc.name,
   url: doc.url,
 });
 
+// finds a tab (or set of tabs) by owner
 TabSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
@@ -58,16 +61,19 @@ TabSchema.statics.findByOwner = (ownerId, callback) => {
   return TabModel.find(search).select('name artist url').exec(callback);
 };
 
+// removes a favorited tab from the user's account
 TabSchema.statics.removeTab = (ownerId, url, callback) => {
   const search = {
     owner: convertId(ownerId),
-    url: url,
+    url,
   };
 
   return TabModel.remove(search, callback);
 };
 
+// creates a new model based on the Tab schema (above)
 TabModel = mongoose.model('Tab', TabSchema);
 
+// exports
 module.exports.TabModel = TabModel;
 module.exports.TabSchema = TabSchema;

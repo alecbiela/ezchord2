@@ -239,7 +239,7 @@ form {
     float: right;
     width: 80px;
     height: 25px;
-	margin-top: 30px;
+    margin-top: 30px;
 }
 
 #reset{
@@ -308,11 +308,11 @@ h1{
     background-color: #ddd;
     margin-right: 2%;
     border-radius: 2px;
-	border: 1px solid black;
+    border: 1px solid black;
 }
 
 #leftSide {
-	position: relative;
+    position: relative;
     width: 65%;
     margin: auto;
     float: left;

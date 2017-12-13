@@ -115,16 +115,22 @@ var setup = function setup(csrf) {
   createLoginContentWindow(csrf);
 };
 
+//called to get the initial token
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {
     setup(result.csrfToken);
   });
 };
 
+//called at page load
 $(document).ready(function () {
   getToken();
 });
 "use strict";
+
+//helper.js
+//contains functionality used across views
+
 
 //called for error handling, will display error message on page
 var handleError = function handleError(message) {
