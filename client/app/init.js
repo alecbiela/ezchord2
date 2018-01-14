@@ -19,6 +19,8 @@ const setup = function(csrf) {
   $('#searchResponse').on('click', '#submitScrape', handleTabScrape);
   $('#favoritesWindow').on('click', '.favoriteInfo', handleFavScrape);
   $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
+  $('#scrapeResponse').on('click', '#startOver', handleStartOver);
+  $('#searchResponse').on('click', '#startOver', handleStartOver);
   
   //set user colors (in helper module)
   setUserColors();

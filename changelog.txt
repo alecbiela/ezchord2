@@ -1,0 +1,26 @@
+changelog.txt - used to track changes to the EZChordII service
+
+1.14.18
+-----------
++Added this changelog
++Mousing over nav links now illuminates them, current page stays illuminated.
++Changed Favorites Bar to "Min/Max" sidebar, will expand when moused over.
++Changed sizing for many views:
+  --Search Box
+  --Search Results Box
+  --Favorite Tab Sidebar
+  --Tab Viewer
++Added 'Start Over' button which brings back the search box
++'Favorite This Tab!' is now disabled when the user has already favorited the tab
++'Get This Tab!' is not disabled until the user selects a tab
++Added top bar in search results and tab viewer with:
+  --'Start Over' and 'Get This Tab!' buttons (search results)
+  --'Start Over' and 'Favorite This Tab!' buttons (tab viewer)
+  --Tab Name and Artist (tab viewer)
++'Delete Favorite' (x) button moved to always be on top
++Favorite Tabs now hide on one line until moused over, where they expand to the full info
+
+Known Issues:
+!Color selection has been temporarily disabled, will be redesigned in next update
+!No way to view changelog in the service
+!Having too many favorites will cause some to be hidden (sidebar is not scrollable)

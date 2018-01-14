@@ -3,6 +3,14 @@
 //handlers.js
 //contains the app's event handlers
 
+//run when the user clicks the button to start over
+var handleStartOver = function handleStartOver(e) {
+  $('#errorMessage').slideUp(350);
+  $('#searchResponse').slideUp(800);
+  $('#scrapeResponse').slideUp(800);
+  $('#searchWrapper').slideDown(800);
+};
+
 //run when the user clicks the button to favorite a tab
 var handleTabFavorite = function handleTabFavorite(e) {
   e.preventDefault();
@@ -15,6 +23,10 @@ var handleTabFavorite = function handleTabFavorite(e) {
   //send AJAX to save the tab as favorite, afterward reload favorite tabs
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function () {
     loadTabsFromServer();
+
+    //disable favorite button
+    document.getElementById("favoriteButton").disabled = true;
+    $('#favoriteButton').attr('value', 'Favorited');
   });
 
   return false;
@@ -27,11 +39,19 @@ var handleFavDelete = function handleFavDelete(e) {
   //collect info
   var info = e.target.parentNode.lastChild.textContent;
   var token = $("#ctoken").val();
-  console.log(token);
 
   //send AJAX to delete the tab from favorites, afterward reload favorite tabs
   sendAjax('POST', '/removeFavorite', { '_csrf': token, url: info }, function () {
     loadTabsFromServer();
+
+    //re-enable favorites button if we're viewing the tab that we delete
+    var currentSongInfo = e.target.parentNode.firstChild.textContent;
+    var currentSongArr = currentSongInfo.split(' - ');
+    var matchStr = '"' + currentSongArr[1] + '" by ' + currentSongArr[0];
+    if ($('#songInfo').text() === matchStr) {
+      document.getElementById("favoriteButton").disabled = false;
+      $('#favoriteButton').attr('value', 'Favorite This Tab!');
+    }
   });
 
   return false;
@@ -43,9 +63,11 @@ var handleFavScrape = function handleFavScrape(e) {
 
   //change cursor to spinning
   $('body').css("cursor", "progress");
+  $('#errorMessage').slideUp(350);
 
   var info = e.target.parentNode.firstChild.textContent;
   var query = "scrape=" + encodeURIComponent(e.target.parentNode.lastChild.textContent);
+  $('#searchWrapper').slideUp(800);
   $('#scrapeResponse').slideUp(800).promise().done(function () {
     return scrape(query, info);
   });
@@ -56,8 +78,9 @@ var handleFavScrape = function handleFavScrape(e) {
 //scrapes a new (not favorited tab)
 var handleTabScrape = function handleTabScrape(e) {
   e.preventDefault();
-  //let the user know we heard their button press
-  //$('#status').html("Retrieving Tab...");
+
+  //change cursor to spinning
+  $('body').css("cursor", "progress");
 
   //get user selection
   var data = currentSelectionID;
@@ -103,9 +126,20 @@ var scrape = function scrape(query, info) {
       /*$('#tabResults > span').each(() => {                
           $(this).addClass('chord');
         });
-              
-        //do some animating                
-        $('#status').html("");*/
+      */
+      //check to see if the tab is already favorited, 
+      //disable button if yes
+      var tmp = tab.artist + ' - ' + tab.name;
+      if ($("#favoritesWindow:contains('" + tmp + "')").length !== 0) {
+        document.getElementById("favoriteButton").disabled = true;
+        $('#favoriteButton').attr('value', 'Favorited');
+      } else {
+        document.getElementById("favoriteButton").disabled = false;
+        $('#favoriteButton').attr('value', 'Favorite This Tab!');
+      }
+
+      //do some animating                
+      //$('#status').html("");
       $('#searchResponse').slideUp(800);
       $('#scrapeResponse').slideDown(800);
       $('body').css("cursor", "default");
@@ -129,7 +163,8 @@ var changeSelectedResult = function changeSelectedResult(e) {
     $('#' + targ.id).addClass('selectedResponse');
     currentSelectionID = targ.id;
 
-    $('#searchFooter').fadeIn(800);
+    //enable the "get tab" button
+    document.getElementById("submitScrape").disabled = false;
   }
 };
 
@@ -163,6 +198,7 @@ var handleTabSearch = function handleTabSearch(e) {
 
       //do some animating
       $('#scrapeResponse').slideUp(800).promise().done(function () {
+        $('#searchWrapper').slideUp(800);
         $('#searchResponse').slideDown(800);
         $('body').css("cursor", "default");
       });
@@ -192,6 +228,8 @@ var setup = function setup(csrf) {
   $('#searchResponse').on('click', '#submitScrape', handleTabScrape);
   $('#favoritesWindow').on('click', '.favoriteInfo', handleFavScrape);
   $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
+  $('#scrapeResponse').on('click', '#startOver', handleStartOver);
+  $('#searchResponse').on('click', '#startOver', handleStartOver);
 
   //set user colors (in helper module)
   setUserColors();
@@ -226,11 +264,6 @@ var FavoritesList = function FavoritesList(props) {
       "div",
       { className: "favoritedTabs colorable" },
       React.createElement(
-        "h1",
-        null,
-        "My Favorites:"
-      ),
-      React.createElement(
         "h3",
         { className: "emptyFavorites" },
         "You have no favorited Tabs"
@@ -250,7 +283,7 @@ var FavoritesList = function FavoritesList(props) {
       React.createElement(
         "span",
         { className: "deleteFavButton colorable" },
-        " (-)"
+        "  (x)"
       ),
       React.createElement(
         "span",
@@ -263,11 +296,6 @@ var FavoritesList = function FavoritesList(props) {
   return React.createElement(
     "div",
     { className: "favoritedTabs colorable" },
-    React.createElement(
-      "h1",
-      null,
-      "My Favorites:"
-    ),
     tabNodes
   );
 };
@@ -324,17 +352,24 @@ var TabList = function TabList(props) {
     { id: "rWrapper" },
     React.createElement(
       "div",
-      { id: "response" },
-      tabResults
-    ),
-    React.createElement(
-      "div",
-      { id: "searchFooter" },
+      { id: "searchHeader" },
       React.createElement(
         "button",
-        { type: "button", className: "settingSubmit", id: "submitScrape" },
+        { type: "button", className: "settingSubmit", id: "submitScrape", disabled: true },
         "Get This Tab!"
+      ),
+      React.createElement(
+        "button",
+        { id: "startOver", type: "button", className: "settingSubmit" },
+        "Start Over"
       )
+    ),
+    React.createElement("br", null),
+    React.createElement("br", null),
+    React.createElement(
+      "div",
+      { id: "response" },
+      tabResults
     )
   );
 };
@@ -346,12 +381,15 @@ var ScrapeResults = function ScrapeResults(props) {
     null,
     React.createElement(
       "div",
-      { id: "tabResults", style: { whiteSpace: 'pre-wrap' } },
-      props.tabContent
-    ),
-    React.createElement(
-      "div",
-      { id: "tabResultFooter" },
+      { id: "tabResultHeader" },
+      React.createElement(
+        "p",
+        { id: "songInfo" },
+        "\"",
+        props.tab.name,
+        "\" by ",
+        props.tab.artist
+      ),
       React.createElement(
         "form",
         { id: "favoriteForm",
@@ -360,12 +398,24 @@ var ScrapeResults = function ScrapeResults(props) {
           action: "/saveTab",
           method: "POST"
         },
+        React.createElement("input", { id: "favoriteButton", className: "favoriteTabSubmit settingSubmit", type: "submit", value: "Favorite This Tab!" }),
+        React.createElement(
+          "button",
+          { id: "startOver", type: "button", className: "settingSubmit" },
+          "Start Over"
+        ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
         React.createElement("input", { type: "hidden", name: "name", value: props.tab.name }),
         React.createElement("input", { type: "hidden", name: "artist", value: props.tab.artist }),
-        React.createElement("input", { type: "hidden", name: "url", value: props.tab.url }),
-        React.createElement("input", { className: "favoriteTabSubmit settingSubmit", type: "submit", value: "Favorite This Tab!" })
+        React.createElement("input", { type: "hidden", name: "url", value: props.tab.url })
       )
+    ),
+    React.createElement(
+      "div",
+      { id: "tabResults", style: { whiteSpace: 'pre-wrap' } },
+      React.createElement("br", null),
+      React.createElement("br", null),
+      props.tabContent
     )
   );
 };
@@ -377,7 +427,7 @@ var SearchForm = function SearchForm(props) {
     { id: "searchBox", className: "colorable" },
     React.createElement(
       "p",
-      null,
+      { className: "centered" },
       "Enter an artist, song, or both!"
     ),
     React.createElement(
@@ -388,20 +438,11 @@ var SearchForm = function SearchForm(props) {
         action: "/searchForTabs",
         method: "GET"
       },
-      React.createElement(
-        "label",
-        { htmlFor: "bName" },
-        "Artist: "
-      ),
-      React.createElement("input", { type: "text", name: "bName", id: "bName", placeholder: "Artist..." }),
-      React.createElement(
-        "label",
-        { htmlFor: "sName" },
-        "Song: "
-      ),
-      React.createElement("input", { type: "text", name: "sName", id: "sName", placeholder: "Song..." }),
+      React.createElement("input", { type: "text", name: "bName", id: "bName", placeholder: "Artist Name..." }),
+      React.createElement("br", null),
+      React.createElement("input", { type: "text", name: "sName", id: "sName", placeholder: "Song Name..." }),
       React.createElement("input", { type: "hidden", id: "ctoken", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { type: "submit", className: "settingSubmit", value: "Search!", id: "submitButton" })
+      React.createElement("input", { type: "submit", id: "searchSubmit", value: "Search!" })
     )
   );
 };

@@ -1,6 +1,14 @@
 //handlers.js
 //contains the app's event handlers
 
+//run when the user clicks the button to start over
+const handleStartOver = (e) => {
+  $('#errorMessage').slideUp(350);
+  $('#searchResponse').slideUp(800);
+  $('#scrapeResponse').slideUp(800);
+  $('#searchWrapper').slideDown(800);
+};
+
 //run when the user clicks the button to favorite a tab
 const handleTabFavorite = (e) => {
   e.preventDefault();
@@ -15,7 +23,12 @@ const handleTabFavorite = (e) => {
   //send AJAX to save the tab as favorite, afterward reload favorite tabs
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function() {
     loadTabsFromServer();
+	
+	//disable favorite button
+    document.getElementById("favoriteButton").disabled = true;
+	$('#favoriteButton').attr('value','Favorited');	
   });
+  
   
   return false;
 };
@@ -27,11 +40,19 @@ const handleFavDelete = (e) => {
   //collect info
   const info = e.target.parentNode.lastChild.textContent;
   const token = $("#ctoken").val();
-  console.log(token);
   
   //send AJAX to delete the tab from favorites, afterward reload favorite tabs
   sendAjax('POST', '/removeFavorite', { '_csrf': token, url: info }, function() {
     loadTabsFromServer();
+	
+	//re-enable favorites button if we're viewing the tab that we delete
+	const currentSongInfo = e.target.parentNode.firstChild.textContent;
+	const currentSongArr = currentSongInfo.split(' - ');
+	const matchStr = '"' + currentSongArr[1] + '" by ' + currentSongArr[0];
+	if($('#songInfo').text() === matchStr){
+	  document.getElementById("favoriteButton").disabled = false;
+	  $('#favoriteButton').attr('value','Favorite This Tab!');
+	}
   });
   
   return false;
@@ -43,9 +64,11 @@ const handleFavScrape = (e) => {
   
   //change cursor to spinning
   $('body').css("cursor", "progress");
+  $('#errorMessage').slideUp(350);
   
   const info = e.target.parentNode.firstChild.textContent;
   const query = "scrape=" + encodeURIComponent( e.target.parentNode.lastChild.textContent );
+  $('#searchWrapper').slideUp(800);
   $('#scrapeResponse').slideUp(800).promise().done(() => scrape(query, info));
   
   return false;
@@ -104,9 +127,20 @@ const scrape = (query, info) => {
     /*$('#tabResults > span').each(() => {                
         $(this).addClass('chord');
       });
+	  */
+	  //check to see if the tab is already favorited, 
+	  //disable button if yes
+	  const tmp = tab.artist + ' - ' + tab.name;
+	  if($("#favoritesWindow:contains('" + tmp + "')").length !== 0) {
+        document.getElementById("favoriteButton").disabled = true;
+		$('#favoriteButton').attr('value','Favorited');
+	  } else {
+		document.getElementById("favoriteButton").disabled = false;
+		$('#favoriteButton').attr('value','Favorite This Tab!');
+	  }
             
       //do some animating                
-      $('#status').html("");*/
+      //$('#status').html("");
       $('#searchResponse').slideUp(800);
       $('#scrapeResponse').slideDown(800);
 	  $('body').css("cursor", "default");
@@ -118,7 +152,7 @@ const scrape = (query, info) => {
 const changeSelectedResult = (e) => {        
   //get the parent of the button (the <div> of the search result)
   const targ = e.target.parentNode;
-    
+  
   //add selected ID to this object (if it's not already selected)        
   if(targ.id !== currentSelectionID){
 
@@ -130,7 +164,8 @@ const changeSelectedResult = (e) => {
     $('#' + targ.id).addClass('selectedResponse');
     currentSelectionID = targ.id;
         
-    $('#searchFooter').fadeIn(800);
+	//enable the "get tab" button
+	document.getElementById("submitScrape").disabled = false;
   }    
 };
 
@@ -166,6 +201,7 @@ const handleTabSearch = (e) => {
       
 	  //do some animating
       $('#scrapeResponse').slideUp(800).promise().done( () => {
+		  $('#searchWrapper').slideUp(800);
 		  $('#searchResponse').slideDown(800);
 		  $('body').css("cursor", "default");
 	  });

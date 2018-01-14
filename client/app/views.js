@@ -6,7 +6,6 @@ const FavoritesList = function(props) {
   if(props.tabs.length === 0) {
     return (
       <div className="favoritedTabs colorable">
-        <h1>My Favorites:</h1>
         <h3 className="emptyFavorites">You have no favorited Tabs</h3>
       </div>
     );
@@ -16,7 +15,7 @@ const FavoritesList = function(props) {
     return (
       <div key={tab._id} className="favoriteTab">
         <h3 className="favoriteInfo">{tab.artist + ' - ' + tab.name}</h3>
-		<span className="deleteFavButton colorable"> (-)</span>
+		<span className="deleteFavButton colorable">  (x)</span>
         <span className="searchResultURL">{tab.url}</span>
       </div>
     );
@@ -24,7 +23,6 @@ const FavoritesList = function(props) {
   
   return (
     <div className="favoritedTabs colorable">
-      <h1>My Favorites:</h1>
       {tabNodes}
     </div>
   );
@@ -57,11 +55,12 @@ const TabList = (props) => {
   
   return (
     <div id="rWrapper">
+      <div id="searchHeader">
+        <button type="button" className="settingSubmit" id="submitScrape" disabled>Get This Tab!</button>
+	    <button id="startOver" type="button" className="settingSubmit">Start Over</button>
+      </div><br/><br/>
       <div id="response">
         {tabResults}
-      </div>
-      <div id="searchFooter">
-        <button type="button" className="settingSubmit" id="submitScrape">Get This Tab!</button>
       </div>
     </div>
   );
@@ -72,21 +71,23 @@ const TabList = (props) => {
 const ScrapeResults = (props) => {
     return (
       <div>
-        <div id="tabResults" style={{ whiteSpace: 'pre-wrap'}}>{props.tabContent}</div>
-        <div id="tabResultFooter">
-            <form id="favoriteForm"
-                  onSubmit={handleTabFavorite}
-                  name="favoriteForm"
-                  action="/saveTab"
-                  method="POST"
-            >
-                  <input type="hidden" name="_csrf" value={props.csrf} />
-                  <input type="hidden" name="name" value={props.tab.name} />
-                  <input type="hidden" name="artist" value={props.tab.artist} />
-                  <input type="hidden" name="url" value={props.tab.url} />
-                  <input className="favoriteTabSubmit settingSubmit" type="submit" value="Favorite This Tab!" />
-            </form>
+        <div id="tabResultHeader">  
+		  <p id="songInfo">&quot;{props.tab.name}&quot; by {props.tab.artist}</p>
+		  <form id="favoriteForm"
+            onSubmit={handleTabFavorite}
+            name="favoriteForm"
+            action="/saveTab"
+            method="POST"
+          >
+            <input id="favoriteButton" className="favoriteTabSubmit settingSubmit" type="submit" value="Favorite This Tab!" />
+		    <button id="startOver" type="button" className="settingSubmit">Start Over</button>
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input type="hidden" name="name" value={props.tab.name} />
+            <input type="hidden" name="artist" value={props.tab.artist} />
+            <input type="hidden" name="url" value={props.tab.url} />
+          </form>
         </div>
+		<div id="tabResults" style={{ whiteSpace: 'pre-wrap'}}><br/><br/>{props.tabContent}</div>
       </div>
     );
 };
@@ -95,19 +96,17 @@ const ScrapeResults = (props) => {
 const SearchForm = (props) => {
   return (
         <section id="searchBox" className="colorable">    
-            <p>Enter an artist, song, or both!</p>
+            <p className="centered">Enter an artist, song, or both!</p>
             <form id="searchForm"
                   onSubmit={handleTabSearch}
                   name="searchForm"                  
                   action="/searchForTabs"
                   method="GET"
             >
-                <label htmlFor="bName">Artist: </label>
-                <input type="text" name="bName" id="bName" placeholder="Artist..." />
-                <label htmlFor="sName">Song: </label>
-                <input type="text" name="sName" id="sName" placeholder="Song..." />
+                <input type="text" name="bName" id="bName" placeholder="Artist Name..." /><br/>
+                <input type="text" name="sName" id="sName" placeholder="Song Name..." />
                 <input type="hidden" id="ctoken" name="_csrf" value={props.csrf} />
-                <input type="submit" className="settingSubmit" value="Search!" id="submitButton" />
+                <input type="submit" id="searchSubmit" value="Search!" />
             </form>
         </section>
   );

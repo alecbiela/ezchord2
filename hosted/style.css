@@ -4,6 +4,11 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+	position: relative;
+}
+
+button{
+  cursor: pointer;
 }
 
 #logo {
@@ -34,12 +39,19 @@ nav:nth-child(1) {
 }
 
 .navlink a {
+	transition: color 0.3s ease;
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
+	color: gray;
 }
 
 .navlink a:hover {
+	color: white;
+}
+
+.currentLink {
+  color: white !important;
 }
 
 .mainForm {
@@ -140,34 +152,7 @@ form {
     margin-bottom: 0;
 }
 
-#songInfo{
-    width: 660px;
-    padding-right:20px;
-    padding-left:20px;
-    margin: auto;
-    height: 30px;
-    font-size: 20px;
-    background: #ddd;
-    
-}
 
-#response, #searchBox{
-    
-    border: 1px solid black;
-    
-    height: 300px;
-    border-style: border-box;
-    margin: auto;
-    color: #fff;
-}
-
-#searchBox{
-    border-radius: 3px;
-    background: #927AE3;
-    padding: 0 20px 0 20px;
-    width: 720px;
-    height: 110px;
-}
 
 #closeChordInfo{
     float: right;
@@ -177,25 +162,9 @@ form {
     cursor: pointer;
 }
 
-#tabResults{
-    width: 740px;
-    height: 340px;
-    background: #eee;
-    padding-right: 10px;
-    padding-left: 10px;
-    overflow-y: scroll;
-    overflow-x: wrap;
-    margin: auto;
-    font-family: 'Droid Sans Mono', monospace;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-}
 
-#tabResultFooter{
-  width: 760px;
-  height: 100px;
-  margin: auto;
-}
+
+
 .favoriteTabSubmit{
   width: 150px;
   height: 35px;
@@ -219,21 +188,7 @@ form {
     margin-left: 10px;
 }
 
-#rWrapper{
-    width:761px;
-    height: 380px;
-    background: #aaa;
-    border: 1px solid black;
-    border-radius: 3px;
-    margin: auto;
-}
 
-#response{
-    width: 760px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: #aaa;
-}
 
 #submitButton{
     float: right;
@@ -250,11 +205,7 @@ form {
     margin-right: 5px;
 }
 
-#submitScrape{
-    float: right;
-    margin-top: 10px;
-    margin-right: 10px;
-}
+
 
 header{
     padding-top: 5px;
@@ -300,44 +251,20 @@ h1{
     margin-top: 0;
 }
 
-
-#rightSide {
-    width: 30%;
-    margin: auto;
-    float: right;
-    background-color: #ddd;
-    margin-right: 2%;
-    border-radius: 2px;
-    border: 1px solid black;
-}
-
 #leftSide {
-    position: relative;
-    width: 65%;
-    margin: auto;
-    float: left;
-    margin-left: 2%;
+    position: absolute;
+	width: 90%;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+    width: 90%;
+	z-index: 0;
 }
 
 #scrapeResponse, #searchResponse { display: none; }
 
-.favoriteInfo:hover {
-    cursor: pointer;
-    text-decoration: underline; 
-}
 
-#favoritesWindow {
-    margin-left: 8px;
-}
-
-#favoritesWindow h1 {
-    font-size: 150%;
-    margin-top: 10px;
-}
-
-.favoriteTab {
-    margin-left: 15px;
-}
 
 #errorMessage {
   display: none;
@@ -348,12 +275,9 @@ h1{
   height: 50px;
   margin: auto;
   position: absolute;
-  top:0;
-  right:0;
-  background-color: rgba(255,153,153, 0.6);
+  bottom: 0;
   text-align: center;
   line-height: 50px;
-  opacity: 0.6;
 }
 
 #loginPageBody {
@@ -391,19 +315,7 @@ h1{
   margin-top: 40px;
 }
 
-.deleteFavButton {
-  opacity: 0.8;
-  background: none !important;
-}
 
-.deleteFavButton:hover {
-  cursor: pointer;
-  opacity: 1.0;
-}
-
-.favoriteInfo {
-  display: inline-block;
-}
 
 .leftSide {
   float: left;
@@ -427,12 +339,253 @@ h1{
 
 .appError {
   position: absolute;
-  top: 70px !important;
-  width: 500px !important;
-  left: 0 !important;
-  right: 200px !important;
-  background: none !important;
-  opacity: 1.0 !important;
-  text-align: left !important;
+  bottom: 0;
   z-index: 200;
+}
+
+#response {
+    
+    border: 1px solid black;
+    
+    height: 300px;
+    border-style: border-box;
+    margin: auto;
+    color: #fff;
+}
+
+
+/* SEARCH BOX */
+#bName, #sName {
+  width: 100%;
+  margin: 5px auto;
+  height: 50px;
+  line-height: 70px;
+  font-size: 1.5em;
+  display: inline-block;
+}
+
+#searchBox p {
+  margin: 20px auto;
+  font-size: 2em;
+  text-align: center;
+}
+
+#searchBox{
+    border-radius: 3px;
+    background: #927AE3;
+    padding: 20px;
+    width: 45%;
+	height: 275px;
+	margin: auto;
+	border: 1px solid #555;
+}
+
+#searchSubmit{
+  transition: background-color 0.5s ease;
+  display: block;
+  width: 100px;
+  height: 35px;
+  line-height: 30px;
+  font-size: 1.5em;
+  margin: 5px auto;
+  color: black;
+  text-align: center;
+  background-color: gray;
+  border-radius: 2px;
+  border-color: gray;
+  color: white;
+  text-decoration: none;
+}
+
+#searchSubmit:hover{
+  background-color: #555;
+}
+
+/* END SEARCH BOX */
+
+
+
+/* FAVORITES BOX */
+#favoritesWrapper{
+  transition: width 0.4s ease;
+  width: 26px;
+  height: 260px;
+  background: #333;
+  display: inline;
+  float: right;
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid black;
+  z-index: 100;
+  position: absolute;
+  right:0;
+}
+
+#favoritesWrapper:hover {
+  width: 350px;
+}
+
+#favoritesLabel{
+  font-size: 25px;
+  width: 26px;
+  height: 260px;
+  overflow-wrap: break-word;
+  float: left;
+  text-align: center;
+  padding-left:2px;
+  z-index: 101;
+}
+
+.favoriteInfo:hover {
+    cursor: pointer;
+    text-decoration: underline;
+	white-space: normal;
+}
+
+#favoritesWindow {
+	display: inline;
+	float: right;
+	width: 320px;
+    background-color: gray;
+	z-index: 200;
+	min-height: 262px;
+}
+
+#favoritesWindow h1 {
+    font-size: 150%;
+    margin-top: 10px;
+}
+
+.deleteFavButton {
+  transition: color 0.3s ease;
+  opacity: 1.0;
+  background: gray;
+  z-index: 1000;
+  color: pink;
+  background-color: gray;
+  width: 10%;
+  float: right;
+  height: 25px;
+}
+
+.deleteFavButton:hover {
+  cursor: pointer;
+  opacity: 1.0;
+  color: red;
+}
+
+.favoriteTab {
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.favoriteInfo {
+	white-space: nowrap;
+	margin-top: 0;
+	width: 90%;
+	float: left;
+	min-height: 25px;
+}
+
+/* END FAVORITES BOX */
+
+
+/* SEARCH RESULTS BOX */
+#searchHeader{
+  padding: 10px 0;
+}
+
+#rWrapper{
+    width:761px;
+    height: 380px;
+    background: #aaa;
+    border: 1px solid black;
+    border-radius: 3px;
+    margin: auto;
+}
+
+#response{
+    width: 760px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #aaa;
+}
+
+#submitScrape{
+    float: right;
+    margin-top: 10px;
+    margin-right: 10px;
+	opacity: 1.0;
+	transition: opacity 0.3s ease;
+}
+
+#submitScrape:disabled{
+  opacity: 0.5;
+  cursor: default;
+}
+/* END SEARCH RESULTS BOX */
+
+
+/* TAB SCRAPE RESULTS */
+#tabResults{
+    width: 90%;
+    height: 340px;
+    background: #eee;
+    padding-right: 10px;
+    padding-left: 10px;
+    overflow-y: scroll;
+    overflow-x: wrap;
+    margin: auto;
+    font-family: 'Droid Sans Mono', monospace;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+#favoriteForm{
+  display: inline;
+}
+
+#favoriteButton:disabled {
+  opacity: 0.5;
+}
+
+#favoriteButton, #startOver {
+  display: inline-block;
+  float: right;
+  margin: 0;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 25px;
+  line-height: 15px;
+  text-align: center;
+}
+
+#favoriteButton{
+  margin-right: 25px;
+  opacity: 1.0;
+  transition: opacity 0.5s ease;
+}
+
+#tabResultHeader{
+  width: 92%;
+  margin: auto;
+  height: 50px;
+  background: darkgray;
+  border: 1px solid gray;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+#songInfo{
+	display: block;
+	float: left;
+	margin: 0;
+	margin-top: 10px;
+	margin-left: 25px;
+    height: 25px;
+    font-size: 20px;
+    line-height: 25px;
+	color: white;
 }

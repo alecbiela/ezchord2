@@ -13,14 +13,14 @@
 </head>
 <body>
   <nav class="colorable">
-  <div class="navlink colorable"><a class="colorable" href="/ezchord">Home</a></div>
-  <div class="navlink colorable"><a class="colorable" href="/settings">Settings</a></div>
-  <div class="navlink colorable"><a class="colorable" href="/logout">Log out</a></div>
+  <div class="navlink "><a class="currentLink" href="/ezchord">Home</a></div>
+  <div class="navlink "><a href="/settings">Settings</a></div>
+  <div class="navlink "><a href="/logout">Log out</a></div>
   </nav>
   <section id="leftSide">
-  <section id="errorMessage" class="colorable appError">
-  </section>
     <section id="searchWrapper">
+    </section>
+	<section id="errorMessage" class="appError">
     </section>
     <section id="searchResponse">
     </section>
@@ -28,7 +28,10 @@
     </section>
   </section>
   <section id="rightSide" class="colorable">
-    <section id="favoritesWindow">
+    <section id="favoritesWrapper">
+	  <span id="favoritesLabel">FAVORITES</span>
+	    <section id="favoritesWindow">
+		</section>
     </section>
   </section>
   <script src="/assets/bundle.js"></script>

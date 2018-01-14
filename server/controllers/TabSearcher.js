@@ -14,8 +14,6 @@ const searchTabs = (req, res) => {
     res.status(400).json({ error: 'Error!  Please fill in at least 1 field.' });
   }
 
-  let returnedTabs = [];
-
   // set up query
   const ugsQuery = {
     bandName: params.bName,
@@ -32,10 +30,14 @@ const searchTabs = (req, res) => {
       console.dir(response);
       res.status(400).json({ error: 'No tabs found!  Please try again.' });
     } else {
-      returnedTabs = tabs;
+      // filter out any tabs that are not 'chords'
+      const tmp = [];
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].type === 'chords') tmp.push(tabs[i]);
+      }
 
       // use express .json function to return json directly
-      res.json({ tabs: returnedTabs });
+      res.json({ tabs: tmp });
     }
   };
 
