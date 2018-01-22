@@ -22,7 +22,7 @@ button{
 nav {
     width: 100%;
     height: 50px;
-    background-color: gray;
+    /*background-color: gray;*/
     margin-bottom:70px;
 }
 
@@ -39,19 +39,23 @@ nav:nth-child(1) {
 }
 
 .navlink a {
-	transition: color 0.3s ease;
+	/*transition: color 0.3s ease;*/
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-	color: gray;
+	opacity: 0.4;
+	transition: opacity 0.3s ease;
+	/*color: gray;*/
 }
 
 .navlink a:hover {
-	color: white;
+	opacity: 1.0;
+	/*color: white;*/
 }
 
 .currentLink {
-  color: white !important;
+  /*color: white !important;*/
+  opacity: 1.0 !important;
 }
 
 .mainForm {
@@ -74,26 +78,22 @@ nav:nth-child(1) {
     margin-top: 14px;
     font-size: 1.2em;
     width: 100px;
-    background-color: gray;
     border-radius: 2px;
-    border-color: gray;
     padding: 3px 0px;
-    color: white;
     text-decoration: none;
 }
 
 .settingSubmit {
     display: block;
     text-align: center;
-    margin: 0 auto;
-    margin-top: 14px;
+    margin: 5px auto;
     font-size: 0.8em;
-    width: 140px !important;
-    background-color: gray;
+    width: 200px;
+    height: 35px;
+    line-height: 30px;
+    font-size: 1.1em;
     border-radius: 2px;
-    border-color: gray;
     padding: 3px 0px;
-    color: white;
     text-decoration: none;
 }
 
@@ -223,14 +223,16 @@ header{
     border: 1px solid #1c1c1c;
     position: relative;
     color: #1c1c1c;
+	filter: brightness(75%);
+	transition: filter 0.3s ease;
 }
 
 .searchResponseTab:hover{
-    background-color: #B5A3F1;
+	filter: brightness(100%);
 }
 
 .selectedResponse, .selectedResponse:hover {
-  background: #fff;
+  filter: brightness(100%) !important;
 }
 
 .searchResultURL{
@@ -270,7 +272,7 @@ h1{
   display: none;
   z-index: 200;
   font-size: 1.2em;
-  color: red;
+  color: pink;
   width: 100%;
   height: 50px;
   margin: auto;
@@ -290,10 +292,9 @@ h1{
   width: 45%;
   margin-left: 1%;
   margin-right: 2%;
-  border: 3px solid gray;
+  border: 2px solid;
   border-radius: 4px;
   border-style: border-box;
-  background: #eef;
 }
 
 #loginBox {
@@ -301,10 +302,9 @@ h1{
   width: 45%;
   margin-left: 2%;
   margin-right: 1%;
-  border: 3px solid gray;
+  border: 2px solid;
   border-radius: 4px;
   border-style: border-box;
-  background: #eef;
 }
 
 .loginBoxHeader {
@@ -332,21 +332,14 @@ h1{
   margin-right: 10px;
 }
 
-#changeColorForm input {
-  float: right;
-  width: 80px;
-}
-
 .appError {
   position: absolute;
   bottom: 0;
   z-index: 200;
 }
 
-#response {
-    
+#response {   
     border: 1px solid black;
-    
     height: 300px;
     border-style: border-box;
     margin: auto;
@@ -390,10 +383,7 @@ h1{
   margin: 5px auto;
   color: black;
   text-align: center;
-  background-color: gray;
   border-radius: 2px;
-  border-color: gray;
-  color: white;
   text-decoration: none;
 }
 
@@ -446,7 +436,6 @@ h1{
 	display: inline;
 	float: right;
 	width: 320px;
-    background-color: gray;
 	z-index: 200;
 	min-height: 262px;
 }
@@ -457,21 +446,18 @@ h1{
 }
 
 .deleteFavButton {
-  transition: color 0.3s ease;
-  opacity: 1.0;
-  background: gray;
-  z-index: 1000;
-  color: pink;
-  background-color: gray;
+  z-index: 250;
   width: 10%;
   float: right;
   height: 25px;
+  background: rgba(0,0,0,0);
+  filter: brightness(50%);
+  transition: filter 0.3s ease;
 }
 
 .deleteFavButton:hover {
   cursor: pointer;
-  opacity: 1.0;
-  color: red;
+  filter: brightness(100%);
 }
 
 .favoriteTab {
@@ -481,9 +467,9 @@ h1{
 }
 
 .favoriteInfo {
-	white-space: nowrap;
+	padding-left: 10px;
 	margin-top: 0;
-	width: 90%;
+	width: 85%;
 	float: left;
 	min-height: 25px;
 }
@@ -530,7 +516,7 @@ h1{
 /* TAB SCRAPE RESULTS */
 #tabResults{
     width: 90%;
-    height: 340px;
+    height: 380px;
     background: #eee;
     padding-right: 10px;
     padding-left: 10px;
@@ -572,7 +558,6 @@ h1{
   width: 92%;
   margin: auto;
   height: 50px;
-  background: darkgray;
   border: 1px solid gray;
   border-radius: 2px;
   box-sizing: border-box;
@@ -587,5 +572,42 @@ h1{
     height: 25px;
     font-size: 20px;
     line-height: 25px;
-	color: white;
+}
+/* END TAB SCRAPE RESULTS */
+
+/* BEGIN SETTINGS WINDOWS */
+#currPass, #newPass, #newPass2, #colorSelect {
+  width: 100%;
+  margin: 5px auto;
+  height: 40px;
+  line-height: 70px;
+  font-size: 1.5em;
+  display: inline-block;
+}
+
+#cWrapper, #pWrapper {
+  width: 40%;
+  border: 1px solid black;
+  padding: 0;
+}
+
+#changePassBox > h2, #colorConfig > h2 {
+  text-align: center;
+  margin-top: 0;
+  padding-top: 10px;
+}
+
+#cWrapper {
+  float: right;
+  margin-right: 3%;
+}
+
+#pWrapper {
+  float: left;
+  margin-left: 3%;
+}
+
+#changePassForm, #changeColorForm {
+  margin-top: 0;
+  padding-top: 0;
 }

@@ -1,5 +1,21 @@
 changelog.txt - used to track changes to the EZChordII service
 
+1.22.18
+-----------
++Color Selector Re-Enabled, changed to Theme Selector
++Instead of colors, users may now select from a list of 'Themes'
+  --Only 2 themes currently available (Light and Dark)
++Hooked up almost all page elements to be colorable by themes
++Color form moved into js, now rendered with React
++Changes to CSS of login and settings pages
++Changes to CSS of favorites sidebar
++Fixed error messages not displaying correctly on login and settings pages
++Fixed a bug with favoriting a tab that was un-favorited from the tab menu
+
+Known Issues:
+!Favorites still hidden sometimes (deleting some favorites will pull others into view)
+
+
 1.14.18
 -----------
 +Added this changelog

@@ -16,9 +16,10 @@ const handleTabFavorite = (e) => {
 
   //get tab information, don't call if the song is already favorited
   //in the future, this could be replaced with error handling instead of "return false"
-  let searchText = document.querySelector('.selectedResponse > .songArtist').textContent + ' - ' +
-    document.querySelector('.selectedResponse > .songName').textContent;
-  if( $('#favoritesWindow:contains("' + searchText + '")').length > 0 ) return false;
+  let searchText = document.querySelector('#songInfo').textContent;
+  let parseStr = searchText.substring(1, searchText.length - 1).split('" by ');
+  let matchStr = parseStr[1] + ' - ' + parseStr[0];
+  if( $('#favoritesWindow:contains("' + matchStr + '")').length > 0 ) return false;
 
   //send AJAX to save the tab as favorite, afterward reload favorite tabs
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function() {
@@ -67,9 +68,10 @@ const handleFavScrape = (e) => {
   $('#errorMessage').slideUp(350);
   
   const info = e.target.parentNode.firstChild.textContent;
-  const query = "scrape=" + encodeURIComponent( e.target.parentNode.lastChild.textContent );
+  console.dir(info);
+  const target = e.target.parentNode.lastChild.textContent;
   $('#searchWrapper').slideUp(800);
-  $('#scrapeResponse').slideUp(800).promise().done(() => scrape(query, info));
+  $('#scrapeResponse').slideUp(800).promise().done(() => scrape(target, info));
   
   return false;
 };
@@ -89,25 +91,27 @@ const handleTabScrape = (e) => {
     const selectedArtist = document.querySelector('.selectedResponse > .songArtist').innerHTML;
     //setSongInfo(selectedTitle, selectedArtist);
     
-    const query = "scrape=" + encodeURIComponent( $('#' + data).find('.searchResultURL').html() );    
+    const target = $('#' + data).find('.searchResultURL').html();    
     const info = selectedArtist + ' - ' + selectedTitle;
-    scrape(query, info);
+    scrape(target, info);
     
     return false;    
 };
 
 //base scrape request called by both favorite and non-favorite scrape events
-const scrape = (query, info) => {
+const scrape = (target, info) => {
   //set up query
-  const action = '/scrapeTab';    
+  const action = '/scrapeTab';
+  const query = "scrape=" + encodeURIComponent(target);
   const url = action + "?" + query;
   const infoArr = info.split(' - ');
+  console.dir(infoArr);
 
   //send a request to get the tab, also a request to get a fresh token (for future requests)
   sendAjax('GET', url, null, (data) => {
       
     sendAjax('GET', '/getToken', null, (result) => {
-      let surl = $('.selectedResponse > .searchResultURL').text();
+      let surl = target;
       let tab = {
         name: infoArr[1],
         artist: infoArr[0],
@@ -118,11 +122,16 @@ const scrape = (query, info) => {
         csrf: result.csrfToken,
         tabContent: data.content
       };
+	  
+	  console.dir(tab);
         
       ReactDOM.render(
         <ScrapeResults {...props} />, document.querySelector("#scrapeResponse")
       );
-            
+      
+	  //set user colors again
+	  setUserColors();
+	  
       //attach class 'chord' to everything that Ultimate Guitar recognizes as a 'chord'
     /*$('#tabResults > span').each(() => {                
         $(this).addClass('chord');
@@ -199,6 +208,9 @@ const handleTabSearch = (e) => {
         <TabList {...props} />, document.querySelector("#searchResponse")
       );
       
+	  //update colors (since this content was not loaded when they were initially set)
+	  setUserColors();
+	  
 	  //do some animating
       $('#scrapeResponse').slideUp(800).promise().done( () => {
 		  $('#searchWrapper').slideUp(800);

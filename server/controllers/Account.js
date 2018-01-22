@@ -50,7 +50,7 @@ const login = (request, response) => {
       return res.status(401).json({ error: 'Username or password is incorrect.' });
     }
 
-	// create a new session and send the user to the app homepage
+    // create a new session and send the user to the app homepage
     req.session.account = Account.AccountModel.toAPI(account);
     return res.json({ redirect: '/ezchord' });
   });
@@ -88,7 +88,7 @@ const changePass = (request, response) => {
       return res.status(400).json({ error: 'An Error Occurred' });
     }
 
-	// verify that the user's current password is good
+    // verify that the user's current password is good
     return Account.AccountModel.authenticate(docs.username, req.body.currPass, (error, account) => {
       if (error || !account) {
         return res.status(401).json({ error: 'Current Password is incorrect.' });
@@ -100,7 +100,7 @@ const changePass = (request, response) => {
         thisAccount.password = hash;
         thisAccount.salt = salt;
 
-		// save back to DB
+        // save back to DB
         const savePromise = thisAccount.save();
 
         savePromise.then(() => res.json({ message: 'Password Changed Successfully' }));
@@ -119,12 +119,11 @@ const changeColors = (request, response) => {
   const res = response;
 
   // cast to strings to prevent security flaws
-  req.body.textColor = `${req.body.textColor}`;
-  req.body.bgColor = `${req.body.bgColor}`;
+  req.body.colorList = `${req.body.colorList}`;
 
   // validate input
-  if (!req.body.textColor || !req.body.bgColor) {
-    return res.status(400).json({ error: 'Missing Color Values' });
+  if (!req.body.colorList) {
+    return res.status(400).json({ error: 'Missing Color List' });
   }
 
   // grab the account to change
@@ -135,13 +134,12 @@ const changeColors = (request, response) => {
     }
 
     const thisAccount = docs;
-    thisAccount.bgColor = req.body.bgColor;
-    thisAccount.textColor = req.body.textColor;
+    thisAccount.bgColor = req.body.colorList;
 
     // save back to db
     const savePromise = thisAccount.save();
 
-    savePromise.then(() => res.json({ message: 'Colors changed successfully' }));
+    savePromise.then(() => res.json({ message: 'Theme changed successfully' }));
     savePromise.catch((e) => {
       console.dir(e);
       return res.status(500).json({ error: 'An Error Occurred' });
@@ -153,10 +151,24 @@ const changeColors = (request, response) => {
 
 // gets the user's text and background colors to display on the screen
 const getColors = (req, res) => {
-  Account.AccountModel.findByUsername(req.session.account.username, (err, docs) => res.json({
-    bgColor: docs.bgColor,
-    textColor: docs.textColor,
-  }));
+  Account.AccountModel.findByUsername(req.session.account.username, (err, docs) => {
+    // send back a color profile based on user profile number
+    let colors = [];
+    switch (docs.bgColor) {
+      case '1':    // light
+        colors = ['#FAFAFA', '#E6E6E6', '#6A647E', '#CCCCFF', '#6A647E'];
+        break;
+      case '2':    // dark
+        colors = ['#383838', '#6A647E', '#BBBBEE', '#555656', '#BBBBEE'];
+        break;
+      default:     // defaults to light colors
+        colors = ['#FAFAFA', '#E6E6E6', '#6A647E', '#CCCCFF', '#6A647E'];
+        break;
+    }
+
+    // return correct array of colors
+    return res.json({ colors });
+  });
 };
 
 // handles when a user wants to sign up to the service
@@ -188,7 +200,7 @@ const signup = (request, response) => {
       textColor: 'white',
     };
 
-	// create a new account from the model and save it to the DB
+    // create a new account from the model and save it to the DB
     const newAccount = new Account.AccountModel(accountData);
     const savePromise = newAccount.save();
 

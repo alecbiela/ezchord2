@@ -5,24 +5,24 @@
 const FavoritesList = function(props) {
   if(props.tabs.length === 0) {
     return (
-      <div className="favoritedTabs colorable">
-        <h3 className="emptyFavorites">You have no favorited Tabs</h3>
+      <div className="favoritedTabs tc4 bc3">
+        <h3 className="emptyFavorites tc4">You have no favorited Tabs</h3>
       </div>
     );
   }
   
   const tabNodes = props.tabs.map(function(tab) {
     return (
-      <div key={tab._id} className="favoriteTab">
-        <h3 className="favoriteInfo">{tab.artist + ' - ' + tab.name}</h3>
-		<span className="deleteFavButton colorable">  (x)</span>
+      <div key={tab._id} className="favoriteTab bc3">
+        <h3 className="favoriteInfo tc4">{tab.artist + ' - ' + tab.name}</h3>
+		<span className="deleteFavButton tc4">(x)</span>
         <span className="searchResultURL">{tab.url}</span>
       </div>
     );
   });
   
   return (
-    <div className="favoritedTabs colorable">
+    <div className="favoritedTabs bc3">
       {tabNodes}
     </div>
   );
@@ -41,12 +41,12 @@ const TabList = (props) => {
       const rat = (tab.rating) ? (tab.rating + ' stars') : 'unknown';
       const cID = 'searchResult' + index;    
       return (
-      <div className="searchResponseTab colorable" id={cID} >
+      <div className="searchResponseTab bc0" id={cID} >
           <span className="spanButton"></span>
-          <h3 className="songName colorable">{tab.name}</h3>
-          <h3 className="songArtist colorable">{tab.artist}</h3>
-          <p>Difficulty: {diff}</p>
-          <p>Rating: {rat}</p>
+          <h3 className="songName tc4">{tab.name}</h3>
+          <h3 className="songArtist tc4">{tab.artist}</h3>
+          <p className="tc4">Difficulty: {diff}</p>
+          <p className="tc4">Rating: {rat}</p>
           <span className="searchResultURL">{tab.url}</span>  
         </div>
       );
@@ -54,12 +54,12 @@ const TabList = (props) => {
   });
   
   return (
-    <div id="rWrapper">
+    <div id="rWrapper" className="bc3">
       <div id="searchHeader">
-        <button type="button" className="settingSubmit" id="submitScrape" disabled>Get This Tab!</button>
-	    <button id="startOver" type="button" className="settingSubmit">Start Over</button>
+        <button type="button" className="settingSubmit bc4 tc0" id="submitScrape" disabled>Get This Tab!</button>
+	    <button id="startOver" type="button" className="settingSubmit bc4 tc0">Start Over</button>
       </div><br/><br/>
-      <div id="response">
+      <div id="response" className="bc3">
         {tabResults}
       </div>
     </div>
@@ -71,7 +71,7 @@ const TabList = (props) => {
 const ScrapeResults = (props) => {
     return (
       <div>
-        <div id="tabResultHeader">  
+        <div id="tabResultHeader" className="bc3 tc4">  
 		  <p id="songInfo">&quot;{props.tab.name}&quot; by {props.tab.artist}</p>
 		  <form id="favoriteForm"
             onSubmit={handleTabFavorite}
@@ -79,15 +79,15 @@ const ScrapeResults = (props) => {
             action="/saveTab"
             method="POST"
           >
-            <input id="favoriteButton" className="favoriteTabSubmit settingSubmit" type="submit" value="Favorite This Tab!" />
-		    <button id="startOver" type="button" className="settingSubmit">Start Over</button>
+            <input id="favoriteButton" className="favoriteTabSubmit settingSubmit bc4 tc0" type="submit" value="Favorite This Tab!" />
+		    <button id="startOver" type="button" className="settingSubmit bc4 tc0">Start Over</button>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input type="hidden" name="name" value={props.tab.name} />
             <input type="hidden" name="artist" value={props.tab.artist} />
             <input type="hidden" name="url" value={props.tab.url} />
           </form>
         </div>
-		<div id="tabResults" style={{ whiteSpace: 'pre-wrap'}}><br/><br/>{props.tabContent}</div>
+		<div id="tabResults" className="tc4 bc1" style={{ whiteSpace: 'pre-wrap'}}><br/><br/>{props.tabContent}</div>
       </div>
     );
 };
@@ -95,18 +95,18 @@ const ScrapeResults = (props) => {
 //a react element representing the initial search form
 const SearchForm = (props) => {
   return (
-        <section id="searchBox" className="colorable">    
-            <p className="centered">Enter an artist, song, or both!</p>
+        <section id="searchBox" className="bc3">    
+            <p className="centered tc4">Enter an artist, song, or both!</p>
             <form id="searchForm"
                   onSubmit={handleTabSearch}
                   name="searchForm"                  
                   action="/searchForTabs"
                   method="GET"
             >
-                <input type="text" name="bName" id="bName" placeholder="Artist Name..." /><br/>
-                <input type="text" name="sName" id="sName" placeholder="Song Name..." />
+                <input type="text" name="bName" id="bName" className="bc0 tc4" placeholder="Artist Name..." /><br/>
+                <input type="text" name="sName" id="sName" className="bc0 tc4" placeholder="Song Name..." />
                 <input type="hidden" id="ctoken" name="_csrf" value={props.csrf} />
-                <input type="submit" id="searchSubmit" value="Search!" />
+                <input type="submit" id="searchSubmit" className="bc4 tc0" value="Search!" />
             </form>
         </section>
   );

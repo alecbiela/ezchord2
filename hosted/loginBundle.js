@@ -50,10 +50,10 @@ var LoginContentWindow = function LoginContentWindow(props) {
     { id: "loginPageBody" },
     React.createElement(
       "section",
-      { id: "signupBox" },
+      { id: "signupBox", className: "bc3" },
       React.createElement(
         "h1",
-        { className: "loginBoxHeader" },
+        { className: "loginBoxHeader tc4" },
         "Create A Free Account:"
       ),
       React.createElement(
@@ -65,19 +65,19 @@ var LoginContentWindow = function LoginContentWindow(props) {
           method: "POST",
           className: "mainForm"
         },
-        React.createElement("input", { id: "sUser", className: "user", type: "text", name: "username", placeholder: "Username..." }),
-        React.createElement("input", { id: "sPass", className: "pass", type: "password", name: "pass", placeholder: "Password..." }),
-        React.createElement("input", { id: "sPass2", className: "pass2", type: "password", name: "pass2", placeholder: "Confirm Password..." }),
+        React.createElement("input", { id: "sUser", className: "user bc0 tc4", type: "text", name: "username", placeholder: "Username..." }),
+        React.createElement("input", { id: "sPass", className: "pass bc0 tc4", type: "password", name: "pass", placeholder: "Password..." }),
+        React.createElement("input", { id: "sPass2", className: "pass2 bc0 tc4", type: "password", name: "pass2", placeholder: "Confirm Password..." }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign Up" })
+        React.createElement("input", { className: "formSubmit bc4 tc0", type: "submit", value: "Sign Up" })
       )
     ),
     React.createElement(
       "section",
-      { id: "loginBox" },
+      { id: "loginBox", className: "bc3" },
       React.createElement(
         "h1",
-        { className: "loginBoxHeader" },
+        { className: "loginBoxHeader tc4" },
         "Returning Users:"
       ),
       React.createElement(
@@ -88,10 +88,10 @@ var LoginContentWindow = function LoginContentWindow(props) {
           method: "POST",
           className: "mainForm"
         },
-        React.createElement("input", { id: "lUser", className: "user", type: "text", name: "username", placeholder: "Username..." }),
-        React.createElement("input", { id: "lPass", className: "pass", type: "password", name: "pass", placeholder: "Password..." }),
+        React.createElement("input", { id: "lUser", className: "user bc0 tc4", type: "text", name: "username", placeholder: "Username..." }),
+        React.createElement("input", { id: "lPass", className: "pass bc0 tc4", type: "password", name: "pass", placeholder: "Password..." }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign in" })
+        React.createElement("input", { className: "formSubmit bc4 tc0", type: "submit", value: "Sign in" })
       )
     )
   );
@@ -144,16 +144,47 @@ var redirect = function redirect(response) {
   window.location = response.redirect;
 };
 
-//called to change the user's colors (at page load)
-//will color every element with the class name 'colorable'
+//called to change the user's colors
+//will set colors according to the color theme it gets back
 var setUserColors = function setUserColors() {
   //get colors
   sendAjax('GET', '/colors', null, function (data) {
 
     //style all
-    $('.colorable').css({
-      'background-color': data.bgColor,
-      'color': data.textColor
+    $('.bc0').css({
+      'background-color': data.colors[0]
+    });
+    $('.bc1').css({
+      'background-color': data.colors[1]
+    });
+    $('.bc2').css({
+      'background-color': data.colors[2]
+    });
+    $('.bc3').css({
+      'background-color': data.colors[3]
+    });
+    $('.bc4').css({
+      'background-color': data.colors[4]
+    });
+    $('.tc0').css({
+      'color': data.colors[0],
+      'border-color': data.colors[0]
+    });
+    $('.tc1').css({
+      'color': data.colors[1],
+      'border-color': data.colors[1]
+    });
+    $('.tc2').css({
+      'color': data.colors[2],
+      'border-color': data.colors[2]
+    });
+    $('.tc3').css({
+      'color': data.colors[3],
+      'border-color': data.colors[3]
+    });
+    $('.tc4').css({
+      'color': data.colors[4],
+      'border-color': data.colors[4]
     });
   });
 };

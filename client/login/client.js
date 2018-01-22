@@ -45,8 +45,8 @@ const handleSignup = (e) => {
 const LoginContentWindow = (props) => {
   return (
     <section id="loginPageBody">
-      <section id="signupBox">
-        <h1 className="loginBoxHeader">Create A Free Account:</h1>
+      <section id="signupBox" className="bc3">
+        <h1 className="loginBoxHeader tc4">Create A Free Account:</h1>
         <form id="signupForm"
           name="signupForm"
           onSubmit={handleSignup}
@@ -54,26 +54,26 @@ const LoginContentWindow = (props) => {
           method="POST"
           className="mainForm"
         >
-          <input id="sUser" className="user" type="text" name="username" placeholder="Username..."/>
-          <input id="sPass" className="pass" type="password" name="pass" placeholder="Password..."/>
-          <input id="sPass2"className="pass2" type="password" name="pass2" placeholder="Confirm Password..."/>
+          <input id="sUser" className="user bc0 tc4" type="text" name="username" placeholder="Username..."/>
+          <input id="sPass" className="pass bc0 tc4" type="password" name="pass" placeholder="Password..."/>
+          <input id="sPass2"className="pass2 bc0 tc4" type="password" name="pass2" placeholder="Confirm Password..."/>
           <input type="hidden" name="_csrf" value={props.csrf}/>
-          <input className="formSubmit" type="submit" value="Sign Up" />
+          <input className="formSubmit bc4 tc0" type="submit" value="Sign Up" />
         </form>
       </section>
       
-      <section id="loginBox">
-        <h1 className="loginBoxHeader">Returning Users:</h1>      
+      <section id="loginBox" className="bc3">
+        <h1 className="loginBoxHeader tc4">Returning Users:</h1>      
         <form id="loginForm" name="loginForm"
           onSubmit={handleLogin}
           action="/login"
           method="POST"
           className="mainForm"
         >
-          <input id="lUser" className="user" type="text" name="username" placeholder="Username..."/>
-          <input id="lPass" className="pass" type="password" name="pass" placeholder="Password..."/>
+          <input id="lUser" className="user bc0 tc4" type="text" name="username" placeholder="Username..."/>
+          <input id="lPass" className="pass bc0 tc4" type="password" name="pass" placeholder="Password..."/>
           <input type="hidden" name="_csrf" value={props.csrf}/>
-          <input className="formSubmit" type="submit" value="Sign in" />
+          <input className="formSubmit bc4 tc0" type="submit" value="Sign in" />
         </form>
       </section>
     </section>

@@ -17,8 +17,10 @@ var handleTabFavorite = function handleTabFavorite(e) {
 
   //get tab information, don't call if the song is already favorited
   //in the future, this could be replaced with error handling instead of "return false"
-  var searchText = document.querySelector('.selectedResponse > .songArtist').textContent + ' - ' + document.querySelector('.selectedResponse > .songName').textContent;
-  if ($('#favoritesWindow:contains("' + searchText + '")').length > 0) return false;
+  var searchText = document.querySelector('#songInfo').textContent;
+  var parseStr = searchText.substring(1, searchText.length - 1).split('" by ');
+  var matchStr = parseStr[1] + ' - ' + parseStr[0];
+  if ($('#favoritesWindow:contains("' + matchStr + '")').length > 0) return false;
 
   //send AJAX to save the tab as favorite, afterward reload favorite tabs
   sendAjax('POST', '/saveTab', $('#favoriteForm').serialize(), function () {
@@ -66,10 +68,11 @@ var handleFavScrape = function handleFavScrape(e) {
   $('#errorMessage').slideUp(350);
 
   var info = e.target.parentNode.firstChild.textContent;
-  var query = "scrape=" + encodeURIComponent(e.target.parentNode.lastChild.textContent);
+  console.dir(info);
+  var target = e.target.parentNode.lastChild.textContent;
   $('#searchWrapper').slideUp(800);
   $('#scrapeResponse').slideUp(800).promise().done(function () {
-    return scrape(query, info);
+    return scrape(target, info);
   });
 
   return false;
@@ -90,25 +93,27 @@ var handleTabScrape = function handleTabScrape(e) {
   var selectedArtist = document.querySelector('.selectedResponse > .songArtist').innerHTML;
   //setSongInfo(selectedTitle, selectedArtist);
 
-  var query = "scrape=" + encodeURIComponent($('#' + data).find('.searchResultURL').html());
+  var target = $('#' + data).find('.searchResultURL').html();
   var info = selectedArtist + ' - ' + selectedTitle;
-  scrape(query, info);
+  scrape(target, info);
 
   return false;
 };
 
 //base scrape request called by both favorite and non-favorite scrape events
-var scrape = function scrape(query, info) {
+var scrape = function scrape(target, info) {
   //set up query
   var action = '/scrapeTab';
+  var query = "scrape=" + encodeURIComponent(target);
   var url = action + "?" + query;
   var infoArr = info.split(' - ');
+  console.dir(infoArr);
 
   //send a request to get the tab, also a request to get a fresh token (for future requests)
   sendAjax('GET', url, null, function (data) {
 
     sendAjax('GET', '/getToken', null, function (result) {
-      var surl = $('.selectedResponse > .searchResultURL').text();
+      var surl = target;
       var tab = {
         name: infoArr[1],
         artist: infoArr[0],
@@ -120,7 +125,12 @@ var scrape = function scrape(query, info) {
         tabContent: data.content
       };
 
+      console.dir(tab);
+
       ReactDOM.render(React.createElement(ScrapeResults, props), document.querySelector("#scrapeResponse"));
+
+      //set user colors again
+      setUserColors();
 
       //attach class 'chord' to everything that Ultimate Guitar recognizes as a 'chord'
       /*$('#tabResults > span').each(() => {                
@@ -196,6 +206,9 @@ var handleTabSearch = function handleTabSearch(e) {
       //render the search response with props (above)
       ReactDOM.render(React.createElement(TabList, props), document.querySelector("#searchResponse"));
 
+      //update colors (since this content was not loaded when they were initially set)
+      setUserColors();
+
       //do some animating
       $('#scrapeResponse').slideUp(800).promise().done(function () {
         $('#searchWrapper').slideUp(800);
@@ -231,14 +244,14 @@ var setup = function setup(csrf) {
   $('#scrapeResponse').on('click', '#startOver', handleStartOver);
   $('#searchResponse').on('click', '#startOver', handleStartOver);
 
-  //set user colors (in helper module)
-  setUserColors();
-
   ReactDOM.render(React.createElement(SearchForm, { csrf: csrf }), document.querySelector("#searchWrapper"));
 
   ReactDOM.render(React.createElement(FavoritesList, { tabs: [] }), document.querySelector("#favoritesWindow"));
 
   loadTabsFromServer();
+
+  //set user colors (in helper module)
+  setUserColors();
 };
 
 //gets an initial token at page load, then calls setup
@@ -262,10 +275,10 @@ var FavoritesList = function FavoritesList(props) {
   if (props.tabs.length === 0) {
     return React.createElement(
       "div",
-      { className: "favoritedTabs colorable" },
+      { className: "favoritedTabs tc4 bc3" },
       React.createElement(
         "h3",
-        { className: "emptyFavorites" },
+        { className: "emptyFavorites tc4" },
         "You have no favorited Tabs"
       )
     );
@@ -274,16 +287,16 @@ var FavoritesList = function FavoritesList(props) {
   var tabNodes = props.tabs.map(function (tab) {
     return React.createElement(
       "div",
-      { key: tab._id, className: "favoriteTab" },
+      { key: tab._id, className: "favoriteTab bc3" },
       React.createElement(
         "h3",
-        { className: "favoriteInfo" },
+        { className: "favoriteInfo tc4" },
         tab.artist + ' - ' + tab.name
       ),
       React.createElement(
         "span",
-        { className: "deleteFavButton colorable" },
-        "  (x)"
+        { className: "deleteFavButton tc4" },
+        "(x)"
       ),
       React.createElement(
         "span",
@@ -295,7 +308,7 @@ var FavoritesList = function FavoritesList(props) {
 
   return React.createElement(
     "div",
-    { className: "favoritedTabs colorable" },
+    { className: "favoritedTabs bc3" },
     tabNodes
   );
 };
@@ -314,27 +327,27 @@ var TabList = function TabList(props) {
       var cID = 'searchResult' + index;
       return React.createElement(
         "div",
-        { className: "searchResponseTab colorable", id: cID },
+        { className: "searchResponseTab bc0", id: cID },
         React.createElement("span", { className: "spanButton" }),
         React.createElement(
           "h3",
-          { className: "songName colorable" },
+          { className: "songName tc4" },
           tab.name
         ),
         React.createElement(
           "h3",
-          { className: "songArtist colorable" },
+          { className: "songArtist tc4" },
           tab.artist
         ),
         React.createElement(
           "p",
-          null,
+          { className: "tc4" },
           "Difficulty: ",
           diff
         ),
         React.createElement(
           "p",
-          null,
+          { className: "tc4" },
           "Rating: ",
           rat
         ),
@@ -349,18 +362,18 @@ var TabList = function TabList(props) {
 
   return React.createElement(
     "div",
-    { id: "rWrapper" },
+    { id: "rWrapper", className: "bc3" },
     React.createElement(
       "div",
       { id: "searchHeader" },
       React.createElement(
         "button",
-        { type: "button", className: "settingSubmit", id: "submitScrape", disabled: true },
+        { type: "button", className: "settingSubmit bc4 tc0", id: "submitScrape", disabled: true },
         "Get This Tab!"
       ),
       React.createElement(
         "button",
-        { id: "startOver", type: "button", className: "settingSubmit" },
+        { id: "startOver", type: "button", className: "settingSubmit bc4 tc0" },
         "Start Over"
       )
     ),
@@ -368,7 +381,7 @@ var TabList = function TabList(props) {
     React.createElement("br", null),
     React.createElement(
       "div",
-      { id: "response" },
+      { id: "response", className: "bc3" },
       tabResults
     )
   );
@@ -381,7 +394,7 @@ var ScrapeResults = function ScrapeResults(props) {
     null,
     React.createElement(
       "div",
-      { id: "tabResultHeader" },
+      { id: "tabResultHeader", className: "bc3 tc4" },
       React.createElement(
         "p",
         { id: "songInfo" },
@@ -398,10 +411,10 @@ var ScrapeResults = function ScrapeResults(props) {
           action: "/saveTab",
           method: "POST"
         },
-        React.createElement("input", { id: "favoriteButton", className: "favoriteTabSubmit settingSubmit", type: "submit", value: "Favorite This Tab!" }),
+        React.createElement("input", { id: "favoriteButton", className: "favoriteTabSubmit settingSubmit bc4 tc0", type: "submit", value: "Favorite This Tab!" }),
         React.createElement(
           "button",
-          { id: "startOver", type: "button", className: "settingSubmit" },
+          { id: "startOver", type: "button", className: "settingSubmit bc4 tc0" },
           "Start Over"
         ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
@@ -412,7 +425,7 @@ var ScrapeResults = function ScrapeResults(props) {
     ),
     React.createElement(
       "div",
-      { id: "tabResults", style: { whiteSpace: 'pre-wrap' } },
+      { id: "tabResults", className: "tc4 bc1", style: { whiteSpace: 'pre-wrap' } },
       React.createElement("br", null),
       React.createElement("br", null),
       props.tabContent
@@ -424,10 +437,10 @@ var ScrapeResults = function ScrapeResults(props) {
 var SearchForm = function SearchForm(props) {
   return React.createElement(
     "section",
-    { id: "searchBox", className: "colorable" },
+    { id: "searchBox", className: "bc3" },
     React.createElement(
       "p",
-      { className: "centered" },
+      { className: "centered tc4" },
       "Enter an artist, song, or both!"
     ),
     React.createElement(
@@ -438,11 +451,11 @@ var SearchForm = function SearchForm(props) {
         action: "/searchForTabs",
         method: "GET"
       },
-      React.createElement("input", { type: "text", name: "bName", id: "bName", placeholder: "Artist Name..." }),
+      React.createElement("input", { type: "text", name: "bName", id: "bName", className: "bc0 tc4", placeholder: "Artist Name..." }),
       React.createElement("br", null),
-      React.createElement("input", { type: "text", name: "sName", id: "sName", placeholder: "Song Name..." }),
+      React.createElement("input", { type: "text", name: "sName", id: "sName", className: "bc0 tc4", placeholder: "Song Name..." }),
       React.createElement("input", { type: "hidden", id: "ctoken", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { type: "submit", id: "searchSubmit", value: "Search!" })
+      React.createElement("input", { type: "submit", id: "searchSubmit", className: "bc4 tc0", value: "Search!" })
     )
   );
 };
@@ -464,16 +477,47 @@ var redirect = function redirect(response) {
   window.location = response.redirect;
 };
 
-//called to change the user's colors (at page load)
-//will color every element with the class name 'colorable'
+//called to change the user's colors
+//will set colors according to the color theme it gets back
 var setUserColors = function setUserColors() {
   //get colors
   sendAjax('GET', '/colors', null, function (data) {
 
     //style all
-    $('.colorable').css({
-      'background-color': data.bgColor,
-      'color': data.textColor
+    $('.bc0').css({
+      'background-color': data.colors[0]
+    });
+    $('.bc1').css({
+      'background-color': data.colors[1]
+    });
+    $('.bc2').css({
+      'background-color': data.colors[2]
+    });
+    $('.bc3').css({
+      'background-color': data.colors[3]
+    });
+    $('.bc4').css({
+      'background-color': data.colors[4]
+    });
+    $('.tc0').css({
+      'color': data.colors[0],
+      'border-color': data.colors[0]
+    });
+    $('.tc1').css({
+      'color': data.colors[1],
+      'border-color': data.colors[1]
+    });
+    $('.tc2').css({
+      'color': data.colors[2],
+      'border-color': data.colors[2]
+    });
+    $('.tc3').css({
+      'color': data.colors[3],
+      'border-color': data.colors[3]
+    });
+    $('.tc4').css({
+      'color': data.colors[4],
+      'border-color': data.colors[4]
     });
   });
 };

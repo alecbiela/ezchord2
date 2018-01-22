@@ -21,9 +21,7 @@ const setup = function(csrf) {
   $('#favoritesWindow').on('click', '.deleteFavButton', handleFavDelete);
   $('#scrapeResponse').on('click', '#startOver', handleStartOver);
   $('#searchResponse').on('click', '#startOver', handleStartOver);
-  
-  //set user colors (in helper module)
-  setUserColors();
+
   
   ReactDOM.render(
     <SearchForm csrf={csrf} />, document.querySelector("#searchWrapper")
@@ -34,6 +32,9 @@ const setup = function(csrf) {
   );
   
   loadTabsFromServer();
+  
+  //set user colors (in helper module)
+  setUserColors();
 };
 
 //gets an initial token at page load, then calls setup

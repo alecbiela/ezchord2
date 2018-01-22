@@ -14,16 +14,47 @@ const redirect = (response) => {
   window.location = response.redirect;
 };
 
-//called to change the user's colors (at page load)
-//will color every element with the class name 'colorable'
+//called to change the user's colors
+//will set colors according to the color theme it gets back
 const setUserColors = () => {
   //get colors
   sendAjax('GET', '/colors', null, (data) => {
     
     //style all
-    $('.colorable').css({
-      'background-color': data.bgColor,
-      'color': data.textColor,
+    $('.bc0').css({
+      'background-color': data.colors[0],
+    });
+    $('.bc1').css({
+      'background-color': data.colors[1],
+    });
+    $('.bc2').css({
+      'background-color': data.colors[2],
+    });
+    $('.bc3').css({
+      'background-color': data.colors[3],
+    });
+    $('.bc4').css({
+      'background-color': data.colors[4],
+    });
+    $('.tc0').css({
+      'color': data.colors[0],
+	  'border-color': data.colors[0],
+    });
+    $('.tc1').css({
+      'color': data.colors[1],
+	  'border-color': data.colors[1],
+    });
+    $('.tc2').css({
+      'color': data.colors[2],
+	  'border-color': data.colors[2],
+    });
+    $('.tc3').css({
+      'color': data.colors[3],
+	  'border-color': data.colors[3],
+    });
+    $('.tc4').css({
+      'color': data.colors[4],
+	  'border-color': data.colors[4],
     });
   });
 };

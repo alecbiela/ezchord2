@@ -29,7 +29,7 @@ const handleChangePass = (e) => {
   sendAjax('POST', $("#changePassForm").attr("action"), $("#changePassForm").serialize(), (xhr) => {
     //reset the form
     //https://stackoverflow.com/questions/6364289/clear-form-fields-with-jquery
-    $('#changePassForm').find("input[type=password], textarea").val("")
+    $('#changePassForm').find("input[type=password], textarea").val("");
     
     //let the user know PW change succeeded
     handleError("Password Changed Successfully");
@@ -60,8 +60,8 @@ const handleChangeColor = (e)=> {
 //react element for the password change window
 const ChangePassWindow = (props) => {
   return (
-  <section id="changePassBox">
-    <h1 className="loginBoxHeader">Change Password:</h1>
+  <section id="changePassBox" className="bc3 tc4">
+    <h2 className="bc3 tc4">Change Password:</h2>
     <form id="changePassForm"
       name="changePassForm"
       onSubmit={handleChangePass}
@@ -69,38 +69,52 @@ const ChangePassWindow = (props) => {
       method="POST"
       className="mainForm"
     >
-      <input id="currPass" className="user" type="password" name="currPass" placeholder="Current Password..."/>
-      <input id="newPass"  className="pass" type="password" name="newPass" placeholder="New Password..."/>
-      <input id="newPass2" className="pass2" type="password" name="newPass2" placeholder="Confirm New Password..."/>
+      <input id="currPass" className="bc0 tc4" type="password" name="currPass" placeholder="Current Password..."/>
+      <input id="newPass"  className="bc0 tc4" type="password" name="newPass" placeholder="New Password..."/>
+      <input id="newPass2" className="bc0 tc4" type="password" name="newPass2" placeholder="Confirm New Password..."/>
       <input type="hidden" name="_csrf" value={props.csrf}/>
-      <input className="settingSubmit" type="submit" value="Change Password" />
+      <input className="settingSubmit bc4 tc0" type="submit" value="Change Password" />
     </form>
   </section>
+  );
+};
+
+//react element for the color change window
+const ChangeColorWindow = (props) => {
+  return (
+    <section id="colorConfig" className="bc3 tc4">
+      <h2 className="bc3 tc4">Change Theme:</h2>
+      <form id="changeColorForm"
+        name="changeColorForm"
+	    onSubmit={handleChangeColor}
+        action="/colors"
+        method="POST"
+        className="mainForm"
+      >
+        <select id="colorSelect" name="colorList" form="changeColorForm" className="bc0 tc4">
+	      <option className="bc0 tc4" value="1">Color Theme 1 (Light)</option>
+		  <option className="bc0 tc4" value="2">Color Theme 2 (Dark)</option>
+	    </select><br/>
+        <input type="hidden" name="_csrf" value={props.csrf} />
+        <input className="settingSubmit bc4 tc0" type="submit" value="Change Theme" />
+      </form>
+    </section>
   );
 };
         
 //called at page load to setup the page
 const setup = function(csrf) {
   
+  //render the forms
+  ReactDOM.render(
+    <ChangePassWindow csrf={csrf} />, document.querySelector("#pWrapper")
+  );
+  ReactDOM.render(
+    <ChangeColorWindow csrf={csrf} />, document.querySelector("#cWrapper")
+  );
+  
   //set the user colors
   setUserColors();
-  
-  //render the password change window
-  ReactDOM.render(
-    <ChangePassWindow csrf={csrf} />, document.querySelector("#content")
-  );
-  $('#ctoken').val(csrf);
-  
-  //hook up event listeners
-  $("#bgColor").on("change", function(e) {
-    $(".colorPreview").css("background", e.target.value);
-  });
-  
-  $("#textColor").on("change", function(e) {
-    $(".colorPreview").css("color", e.target.value);
-  });
-  
-  $("#changeColorForm").on("submit", handleChangeColor);
 };
 
 //gets an initial token at page load, then calls setup
