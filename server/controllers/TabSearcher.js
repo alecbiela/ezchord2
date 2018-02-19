@@ -16,10 +16,11 @@ const searchTabs = (req, res) => {
 
   // set up query
   const ugsQuery = {
-    bandName: params.bName,
-    songName: params.sName,
-    page: 1,
-    type: ['chords'],
+    //band_name: params.bName,
+	//song_name: params.sName,
+	query: `${params.bName} ${params.sName}`,
+	page: 1,
+    type: ['Chords'],
   };
 
   // callback for tab searching
@@ -33,7 +34,7 @@ const searchTabs = (req, res) => {
       // filter out any tabs that are not 'chords'
       const tmp = [];
       for (let i = 0; i < tabs.length; i++) {
-        if (tabs[i].type === 'chords') tmp.push(tabs[i]);
+        if (tabs[i].type === 'Chords') tmp.push(tabs[i]);
       }
 
       // use express .json function to return json directly

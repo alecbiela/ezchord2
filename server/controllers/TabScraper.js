@@ -17,7 +17,12 @@ const scrapeTab = (req, res) => {
       console.dir(error);
       res.status(500).json({ error: 'Internal Server Error.  Please contact page administrator.' });
     }
-    const tmp = { content: tab.content.text };
+	
+	//remove [ch][/ch] for now
+	let data = tab.content.text;
+	data = data.split('[ch]').join('');
+	data = data.split('[/ch]').join('');
+    const tmp = { content: data };
     res.json(tmp);
   };
 
