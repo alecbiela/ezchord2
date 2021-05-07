@@ -7,8 +7,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
+const redis = require('redis');
 const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
+let RedisStore = require('connect-redis')(session);
 const url = require('url');
 const csrf = require('csurf');
 
@@ -37,6 +38,14 @@ if (process.env.REDISCLOUD_URL) {
   redisPASS = redisURL.auth.split(':')[1];
 }
 
+let redisClient = redis.createClient({
+	host: redisURL.hostname,
+	port: redisURL.port,
+	password: redisPASS
+});
+redisClient.unref();
+redisClient.on('error', console.log);
+
 // pull in our routes
 const router = require('./router.js');
 
@@ -51,9 +60,7 @@ app.use(bodyParser.urlencoded({
 app.use(session({
   key: 'sessionid',
   store: new RedisStore({
-    host: redisURL.hostname,
-    port: redisURL.port,
-    pass: redisPASS,
+    client: redisClient
   }),
   secret: 'Domo Arigato',
   resave: true,

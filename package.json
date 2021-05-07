@@ -28,28 +28,30 @@
   "author": "Alec Bielanos",
   "license": "Apache 2.0",
   "dependencies": {
-    "body-parser": "*",
-    "compression": "*",
-    "connect-redis": "*",
-    "cookie-parser": "*",
-    "csurf": "*",
-    "express": "*",
-    "express-handlebars": "*",
-    "express-session": "*",
-    "helmet": "^3.15.0",
-    "mongoose": "^5.4.1",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "connect-redis": "^5.2.0",
+    "cookie-parser": "^1.4.5",
+    "csurf": "^1.11.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.2",
+    "express-session": "^1.17.1",
+    "helmet": "^3.23.3",
+    "mongoose": "^5.12.7",
     "react-colors-picker": "*",
+    "redis": "^3.1.2",
     "serve-favicon": "*",
     "ultimate-guitar-scraper": "*",
-    "underscore": "*"
+    "underscore": "^1.13.1"
   },
   "devDependencies": {
-    "babel-cli": "*",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "*",
-    "eslint": "^5.11.1",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "nodemon": "^1.18.9"
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
+    "@babel/preset-react": "^7.13.13",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.7"
   }
 }
