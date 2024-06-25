@@ -41,7 +41,6 @@
     "react-colors-picker": "*",
     "redis": "^3.1.2",
     "serve-favicon": "*",
-    "ultimate-guitar-scraper": "*",
     "underscore": "^1.13.1"
   },
   "devDependencies": {
